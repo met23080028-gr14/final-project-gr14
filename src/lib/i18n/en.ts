@@ -46,6 +46,7 @@ const en: Dictionary = {
 
   // ── Hold countdown ─────────────────────────────────────────────────────────
   holdTitle: "Your table is being held",
+  holdUntilPrefix: "Table held until",
   holdExpires: "Expires in",
   holdExpired: "Hold expired — the table has been released.",
 
@@ -147,6 +148,42 @@ const en: Dictionary = {
   // ── My bookings ───────────────────────────────────────────────────────────
   myBookingsTitle: "My Bookings",
   myBookingsEmpty: "You have no bookings yet.",
+
+  // ── Landing page — hero ───────────────────────────────────────────────────
+  heroHeadline: "Premium Seafood Buffet Experience",
+  heroSubline: "~200 premium seafood dishes · 24 branches nationwide · 500 guests per venue",
+
+  // ── Landing page — membership banner ─────────────────────────────────────
+  memberBannerTag: "Poseidon Membership",
+  memberBannerTitle: "Exclusive Member Benefits",
+  memberBannerBody: "Create a free account to book faster, receive a birthday voucher, and enjoy member-only promotions.",
+  memberBannerCta: "Create Account / Join Now",
+  memberBenefit1: "Save your info — book in seconds",
+  memberBenefit2: "Exclusive birthday discount voucher",
+  memberBenefit3: "Member deals & promotions",
+
+  // ── Landing page — booking section ───────────────────────────────────────
+  bookingSectionTitle: "Reserve a Table at Poseidon",
+
+  // ── Landing page — highlights ─────────────────────────────────────────────
+  highlight1Label: "~200 dishes",
+  highlight1Sub: "Fresh & diverse seafood",
+  highlight2Label: "500 guests / venue",
+  highlight2Sub: "Spacious, elegant dining",
+  highlight3Label: "24 branches",
+  highlight3Sub: "Nationwide coverage",
+  highlight4Label: "Premium buffet",
+  highlight4Sub: "5-star quality, professional service",
+
+  // ── Landing page — header / call ─────────────────────────────────────────
+  headerLoginBtn: "Sign In / Register",
+  callNow: "Call now",
+
+  // ── Landing page — footer ────────────────────────────────────────────────
+  footerBrand: "Poseidon Premium Seafood Buffet Restaurant Chain",
+  footerAddress: "4F Hanoi Centerpoint, 27 Le Van Luong, Thanh Xuan, Hanoi",
+  footerHotline: "Hotline",
+  footerFollow: "Follow us",
 
   // ── Misc ───────────────────────────────────────────────────────────────────
   loading: "Loading...",

@@ -44,6 +44,7 @@ const vi = {
 
   // ── Hold countdown ─────────────────────────────────────────────────────────
   holdTitle: "Bàn đang được giữ cho bạn",
+  holdUntilPrefix: "Bàn được giữ đến",
   holdExpires: "Hết hạn sau",
   holdExpired: "Hết thời gian giữ bàn — bàn đã được trả lại.",
 
@@ -145,6 +146,42 @@ const vi = {
   // ── My bookings ───────────────────────────────────────────────────────────
   myBookingsTitle: "Đặt bàn của tôi",
   myBookingsEmpty: "Bạn chưa có đặt bàn nào.",
+
+  // ── Landing page — hero ───────────────────────────────────────────────────
+  heroHeadline: "Trải Nghiệm Buffet Hải Sản Đỉnh Cao",
+  heroSubline: "Gần 200 món hải sản cao cấp · 24 chi nhánh toàn quốc · Sức chứa 500 khách/cơ sở",
+
+  // ── Landing page — membership banner ─────────────────────────────────────
+  memberBannerTag: "Poseidon Membership",
+  memberBannerTitle: "Ưu đãi độc quyền cho thành viên",
+  memberBannerBody: "Tạo tài khoản miễn phí để đặt bàn nhanh hơn, nhận voucher sinh nhật và hưởng khuyến mãi thành viên.",
+  memberBannerCta: "Tạo tài khoản / Đăng ký thành viên",
+  memberBenefit1: "Lưu thông tin — đặt bàn nhanh chỉ vài giây",
+  memberBenefit2: "Voucher sinh nhật giảm giá đặc biệt",
+  memberBenefit3: "Khuyến mãi & ưu đãi dành riêng thành viên",
+
+  // ── Landing page — booking section ───────────────────────────────────────
+  bookingSectionTitle: "Đặt bàn tại Poseidon",
+
+  // ── Landing page — highlights ─────────────────────────────────────────────
+  highlight1Label: "Gần 200 món",
+  highlight1Sub: "Hải sản tươi sống đa dạng",
+  highlight2Label: "500 khách / cơ sở",
+  highlight2Sub: "Không gian rộng rãi, sang trọng",
+  highlight3Label: "24 chi nhánh",
+  highlight3Sub: "Phủ sóng toàn quốc",
+  highlight4Label: "Buffet cao cấp",
+  highlight4Sub: "Chất lượng 5 sao, phục vụ chuyên nghiệp",
+
+  // ── Landing page — header / call ─────────────────────────────────────────
+  headerLoginBtn: "Đăng nhập / Đăng ký",
+  callNow: "Gọi ngay",
+
+  // ── Landing page — footer ────────────────────────────────────────────────
+  footerBrand: "Hệ thống nhà hàng Buffet Hải Sản Poseidon",
+  footerAddress: "Tầng 4 Hanoi Centerpoint, 27 Lê Văn Lương, Thanh Xuân, Hà Nội",
+  footerHotline: "Hotline",
+  footerFollow: "Theo dõi chúng tôi",
 
   // ── Misc ───────────────────────────────────────────────────────────────────
   loading: "Đang tải...",

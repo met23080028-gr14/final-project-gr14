@@ -34,7 +34,10 @@ const en: Dictionary = {
   confirmationTitle: "Booking Confirmed!",
   confirmationSubtitle: "We have received your reservation.",
   confirmationId: "Booking ID",
+  confirmationBookingCode: "Booking code",
   confirmationBranch: "Branch",
+  confirmationAddress: "Address",
+  confirmationMapBtn: "View map / Directions",
   confirmationSession: "Session",
   confirmationDate: "Date",
   confirmationArrival: "Arrival",
@@ -42,6 +45,8 @@ const en: Dictionary = {
   confirmationStatus: "Status",
   confirmationHold:
     "Your table will be held for 15 minutes after your arrival time. Please arrive on time.",
+  confirmationNotice: "Booking details will be sent to your Gmail / Phone / Zalo.",
+  confirmationOfferBtn: "Sign up / Sign in for exclusive offers",
   confirmationClose: "Close",
 
   // ── Hold countdown ─────────────────────────────────────────────────────────
@@ -130,8 +135,11 @@ const en: Dictionary = {
   loginPrototypeNote: "Prototype — no real passwords, for demo purposes only.",
   loginLabelBirthday: "Birthday (optional)",
   loginPlaceholderBirthday: "e.g. 06-25 (MM-DD)",
+  loginLabelPassword: "Password (illustrative)",
+  loginPlaceholderPassword: "Enter password",
+  loginBtnGoogle: "Continue with Google",
   loginBtnSubmit: "Sign In / Register",
-  loginBtnGuest: "Continue as Guest",
+  loginBtnGuest: "Continue as guest",
   loginErrPhone: "Please enter a valid phone number.",
   loginErrName: "Please enter your full name.",
   loginGreeting: "Hello",

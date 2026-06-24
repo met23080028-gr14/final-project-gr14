@@ -32,7 +32,10 @@ const vi = {
   confirmationTitle: "Đặt bàn thành công!",
   confirmationSubtitle: "Chúng tôi đã nhận yêu cầu của bạn.",
   confirmationId: "Mã đặt bàn",
+  confirmationBookingCode: "Mã đặt bàn",
   confirmationBranch: "Chi nhánh",
+  confirmationAddress: "Địa chỉ",
+  confirmationMapBtn: "Xem bản đồ / Chỉ đường",
   confirmationSession: "Bữa ăn",
   confirmationDate: "Ngày",
   confirmationArrival: "Giờ đến",
@@ -40,6 +43,8 @@ const vi = {
   confirmationStatus: "Trạng thái",
   confirmationHold:
     "Bàn sẽ được giữ trong 15 phút sau giờ hẹn. Vui lòng đến đúng giờ.",
+  confirmationNotice: "Thông tin đặt bàn sẽ được gửi tới Gmail / SĐT / Zalo của bạn.",
+  confirmationOfferBtn: "Đăng ký / Đăng nhập nhận ưu đãi",
   confirmationClose: "Đóng",
 
   // ── Hold countdown ─────────────────────────────────────────────────────────
@@ -128,6 +133,9 @@ const vi = {
   loginPrototypeNote: "Prototype — không dùng mật khẩu thực, chỉ mang tính minh hoạ.",
   loginLabelBirthday: "Ngày sinh (không bắt buộc)",
   loginPlaceholderBirthday: "Ví dụ: 06-25 (MM-DD)",
+  loginLabelPassword: "Mật khẩu (minh hoạ)",
+  loginPlaceholderPassword: "Nhập mật khẩu",
+  loginBtnGoogle: "Tiếp tục với Google",
   loginBtnSubmit: "Đăng nhập / Đăng ký",
   loginBtnGuest: "Tiếp tục với tư cách khách",
   loginErrPhone: "Vui lòng nhập số điện thoại hợp lệ.",

@@ -12,7 +12,6 @@ export function Header() {
   const { t } = useTranslation();
   const { customer, loaded, logout } = useCustomerContext();
   const pathname = usePathname();
-  const isCustomerPage = pathname === "/";
 
   return (
     <header className="sticky top-0 z-50 bg-brand-red text-white shadow-md">
@@ -72,15 +71,12 @@ export function Header() {
               </button>
             </div>
           ) : (
-            /* Prominent login CTA — only meaningful on customer page */
-            isCustomerPage && (
-              <a
-                href="#booking"
-                className="rounded-lg bg-brand-gold px-3 py-1.5 text-xs font-bold text-brand-red shadow transition-all hover:bg-brand-gold-light active:scale-95 sm:px-4 sm:text-sm"
-              >
-                {t("headerLoginBtn")}
-              </a>
-            )
+            <Link
+              href="/login"
+              className="rounded-lg bg-brand-gold px-3 py-1.5 text-xs font-bold text-brand-red shadow transition-all hover:bg-brand-gold-light active:scale-95 sm:px-4 sm:text-sm"
+            >
+              {t("headerLoginBtn")}
+            </Link>
           )}
 
           <LanguageToggle />

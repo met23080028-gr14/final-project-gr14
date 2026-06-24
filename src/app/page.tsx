@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Phone, ChefHat, Users, MapPin, Award } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/context";
 import { useCustomerContext } from "@/lib/customer-context";
-import { LoginWidget } from "@/components/customer/LoginWidget";
 import { BirthdayBanner } from "@/components/customer/BirthdayBanner";
 import { MyBookings } from "@/components/customer/MyBookings";
 import { BookingForm } from "@/components/customer/BookingForm";
@@ -14,18 +13,11 @@ import { BookingForm } from "@/components/customer/BookingForm";
 
 export default function CustomerPage() {
   const { customer, loaded } = useCustomerContext();
-  const [guestMode, setGuestMode] = useState(false);
 
   if (!loaded) return <PageSkeleton />;
 
-  const showLogin = !customer && !guestMode;
-
   function scrollToBooking() {
-    setGuestMode(false);
-    // Allow React to re-render first, then scroll
-    setTimeout(() => {
-      document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
-    }, 10);
+    document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
   }
 
   return (
@@ -39,15 +31,13 @@ export default function CustomerPage() {
         {customer && <BirthdayBanner customer={customer} />}
 
         {/* Membership banner — non-members only */}
-        {!customer && <MembershipBanner onJoin={scrollToBooking} />}
+        {!customer && <MembershipBanner />}
 
         {/* Past bookings — logged-in customers only */}
         {customer && <MyBookings customerId={customer.id} />}
 
-        {/* Booking section */}
-        <section id="booking" className="scroll-mt-20 space-y-4">
-          {showLogin && <LoginWidget onGuest={() => setGuestMode(true)} />}
-
+        {/* Booking section — single clean card, no login gate */}
+        <section id="booking" className="scroll-mt-20">
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
             <h2 className="mb-5 text-xl font-bold text-gray-900">
               <BookingSectionTitle />
@@ -123,8 +113,8 @@ function HeroSection({ onCta }: { onCta: () => void }) {
           {t("heroHeadline")}
         </h1>
 
-        {/* Sub-headline */}
-        <p className="mx-auto mt-4 max-w-xl text-sm text-white/60 sm:text-base">
+        {/* Sub-headline — nowrap on desktop, wraps gracefully on mobile */}
+        <p className="mt-4 text-xs text-white/60 sm:text-sm sm:whitespace-nowrap">
           {t("heroSubline")}
         </p>
 
@@ -145,14 +135,16 @@ function HeroSection({ onCta }: { onCta: () => void }) {
           </a>
         </div>
 
-        {/* Tagline */}
-        <p className="mt-8 text-xs text-white/30 tracking-wide">{t("tagline")}</p>
+        {/* Tagline — gold/amber, semibold, eye-catching */}
+        <p className="mt-8 text-sm font-semibold tracking-wide text-brand-gold">
+          {t("tagline")}
+        </p>
       </div>
     </section>
   );
 }
 
-function MembershipBanner({ onJoin }: { onJoin: () => void }) {
+function MembershipBanner() {
   const { t } = useTranslation();
   const benefits = [
     { icon: "⚡", text: t("memberBenefit1") },
@@ -203,12 +195,12 @@ function MembershipBanner({ onJoin }: { onJoin: () => void }) {
           ))}
         </ul>
 
-        <button
-          onClick={onJoin}
-          className="mt-5 w-full rounded-xl bg-brand-red py-3 text-sm font-black text-white shadow-md transition-all hover:bg-brand-red-dark hover:shadow-lg active:scale-[0.98] sm:w-auto sm:px-8"
+        <Link
+          href="/login"
+          className="mt-5 inline-block w-full rounded-xl bg-brand-red py-3 text-center text-sm font-black text-white shadow-md transition-all hover:bg-brand-red-dark hover:shadow-lg active:scale-[0.98] sm:w-auto sm:px-8"
         >
           {t("memberBannerCta")}
-        </button>
+        </Link>
       </div>
     </div>
   );

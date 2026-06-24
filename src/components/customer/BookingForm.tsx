@@ -311,6 +311,7 @@ export function BookingForm({ customer }: Props) {
       {confirmedBooking && (
         <ConfirmationModal
           booking={confirmedBooking}
+          isGuest={!customer}
           onClose={() => setConfirmedBooking(null)}
           onCancel={handleCancel}
         />

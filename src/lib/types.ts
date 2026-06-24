@@ -12,6 +12,7 @@ export interface Branch {
   nameEn: string;
   addressVi: string;
   addressEn: string;
+  mapUrl: string;
 }
 
 export interface Session {

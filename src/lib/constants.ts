@@ -15,15 +15,17 @@ export const BRANCHES: Branch[] = [
     id: "le-van-luong",
     nameVi: "Poseidon Lê Văn Lương (Center Point)",
     nameEn: "Poseidon Le Van Luong (Center Point)",
-    addressVi: "Tầng 5, Center Point, 27 Lê Văn Lương, Hà Nội",
-    addressEn: "5F, Center Point, 27 Le Van Luong, Hanoi",
+    addressVi: "Tầng 4 & 5, Tòa nhà Hà Nội Center Point, 27 Lê Văn Lương, Thanh Xuân, Hà Nội",
+    addressEn: "4F & 5F, Hanoi Center Point, 27 Le Van Luong, Thanh Xuan, Hanoi",
+    mapUrl: "https://www.google.com/maps/search/?api=1&query=Buffet+Poseidon+Le+Van+Luong+Center+Point",
   },
   {
     id: "my-dinh",
     nameVi: "Poseidon Mỹ Đình (Sky Lake)",
     nameEn: "Poseidon My Dinh (Sky Lake)",
-    addressVi: "Tầng 5, Sky Lake, 88 Phạm Hùng, Hà Nội",
-    addressEn: "5F, Sky Lake, 88 Pham Hung, Hanoi",
+    addressVi: "Lô 2-01, Tầng L2 TTTM Vincom Plaza Sky Lake, Cầu Giấy, Hà Nội",
+    addressEn: "Unit 2-01, L2F, Vincom Plaza Sky Lake, Cau Giay, Hanoi",
+    mapUrl: "https://www.google.com/maps/search/?api=1&query=Buffet+Poseidon+Vincom+Sky+Lake",
   },
 ];
 

@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { MapPin } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/context";
 import { HoldCountdown } from "./HoldCountdown";
 import { BRANCH_MAP, SESSION_MAP } from "@/lib/constants";
@@ -8,18 +10,24 @@ import type { Booking } from "@/lib/types";
 
 interface Props {
   booking: Booking;
+  isGuest: boolean;
   onClose: () => void;
   onCancel: (id: string) => Promise<void>;
 }
 
-export function ConfirmationModal({ booking, onClose, onCancel }: Props) {
+function makeBookingCode(date: string, arrivalTime: string, id: string): string {
+  const [, mm, dd] = date.split("-");
+  const [hh, min] = arrivalTime.split(":");
+  return `${dd}${mm}${hh}${min}-${id.slice(-2).toUpperCase()}`;
+}
+
+export function ConfirmationModal({ booking, isGuest, onClose, onCancel }: Props) {
   const { t, lang } = useTranslation();
   const [cancelling, setCancelling] = useState(false);
   const [cancelError, setCancelError] = useState<string | null>(null);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
 
-  // Close on Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -28,7 +36,6 @@ export function ConfirmationModal({ booking, onClose, onCancel }: Props) {
     return () => document.removeEventListener("keydown", handler);
   }, [onClose]);
 
-  // Trap focus
   useEffect(() => {
     dialogRef.current?.focus();
   }, []);
@@ -37,7 +44,10 @@ export function ConfirmationModal({ booking, onClose, onCancel }: Props) {
   const session = SESSION_MAP[booking.session];
 
   const branchName = lang === "vi" ? branch.nameVi : branch.nameEn;
+  const branchAddress = lang === "vi" ? branch.addressVi : branch.addressEn;
   const sessionName = lang === "vi" ? session.labelVi : session.labelEn;
+
+  const bookingCode = makeBookingCode(booking.date, booking.arrivalTime, booking.id);
 
   const statusLabel = {
     pending: t("statusPending"),
@@ -83,13 +93,13 @@ export function ConfirmationModal({ booking, onClose, onCancel }: Props) {
       <div
         ref={dialogRef}
         tabIndex={-1}
-        className="relative z-10 w-full max-w-md rounded-2xl bg-white shadow-2xl outline-none"
+        className="relative z-10 w-full max-w-md rounded-2xl bg-white shadow-2xl outline-none overflow-y-auto max-h-[90vh]"
       >
         {/* Header */}
         <div className="rounded-t-2xl bg-brand-red px-6 py-5 text-white">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-2xl font-bold">✓ {t("confirmationTitle")}</p>
+              <p id="modal-title" className="text-2xl font-bold">✓ {t("confirmationTitle")}</p>
               <p className="mt-1 text-sm text-white/80">
                 {t("confirmationSubtitle")}
               </p>
@@ -104,16 +114,45 @@ export function ConfirmationModal({ booking, onClose, onCancel }: Props) {
               </svg>
             </button>
           </div>
-          <p className="mt-3 font-mono text-xs text-white/60">
-            {t("confirmationId")}: <span className="font-bold text-white">{booking.id}</span>
-          </p>
+
+          {/* Prominent booking code */}
+          <div className="mt-3 rounded-lg bg-white/15 px-4 py-2.5">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-white/60">
+              {t("confirmationBookingCode")}
+            </p>
+            <p className="mt-0.5 font-mono text-xl font-black tracking-wider text-white">
+              {bookingCode}
+            </p>
+          </div>
         </div>
 
         {/* Body */}
         <div className="px-6 py-5 space-y-4">
           {/* Details grid */}
           <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-            <Detail label={t("confirmationBranch")} value={branchName} colSpan />
+            {/* Branch + address + map */}
+            <div className="col-span-2">
+              <dt className="text-xs font-medium uppercase tracking-wide text-gray-400">
+                {t("confirmationBranch")}
+              </dt>
+              <dd className="mt-0.5 font-semibold text-gray-900">{branchName}</dd>
+              <dd className="mt-0.5 flex items-start gap-1.5 text-xs text-gray-500">
+                <MapPin size={12} className="mt-0.5 shrink-0 text-brand-red" />
+                {branchAddress}
+              </dd>
+              <dd className="mt-2">
+                <a
+                  href={branch.mapUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-brand-red/30 bg-red-50 px-3 py-1.5 text-xs font-semibold text-brand-red hover:bg-red-100 transition-colors"
+                >
+                  <MapPin size={12} />
+                  {t("confirmationMapBtn")}
+                </a>
+              </dd>
+            </div>
+
             <Detail label={t("confirmationSession")} value={sessionName} />
             <Detail label={t("confirmationDate")} value={booking.date} />
             <Detail label={t("confirmationArrival")} value={booking.arrivalTime} />
@@ -131,12 +170,27 @@ export function ConfirmationModal({ booking, onClose, onCancel }: Props) {
             />
           </dl>
 
+          {/* Notice line */}
+          <p className="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs text-blue-700">
+            {t("confirmationNotice")}
+          </p>
+
           {/* Hold countdown */}
           {(booking.status === "pending" || booking.status === "confirmed") && (
             <HoldCountdown holdExpiresAt={booking.holdExpiresAt} />
           )}
 
           <p className="text-xs text-gray-500">{t("confirmationHold")}</p>
+
+          {/* Offer button for guests */}
+          {isGuest && (
+            <Link
+              href="/login"
+              className="flex w-full items-center justify-center rounded-xl border border-brand-gold bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-800 hover:bg-amber-100 transition-colors"
+            >
+              {t("confirmationOfferBtn")}
+            </Link>
+          )}
 
           {/* Cancel section */}
           {(booking.status === "pending" || booking.status === "confirmed") && (

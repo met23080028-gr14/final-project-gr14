@@ -7,9 +7,13 @@ import { AvailabilityBadge } from "./AvailabilityBadge";
 import { ConfirmationModal } from "./ConfirmationModal";
 import { BRANCHES, SESSIONS } from "@/lib/constants";
 import { todayHCM, resolveBookingDate } from "@/lib/booking-utils";
-import type { Booking, BranchId, SessionId } from "@/lib/types";
+import type { Booking, BranchId, Customer, SessionId } from "@/lib/types";
 
-export function BookingForm() {
+interface Props {
+  customer?: Customer | null;
+}
+
+export function BookingForm({ customer }: Props) {
   const { t, lang } = useTranslation();
 
   const [branch, setBranch] = useState<BranchId | "">("");
@@ -17,13 +21,19 @@ export function BookingForm() {
   const [date, setDate] = useState(todayHCM());
   const [arrivalTime, setArrivalTime] = useState("");
   const [partySize, setPartySize] = useState(2);
-  const [customerName, setCustomerName] = useState("");
-  const [customerPhone, setCustomerPhone] = useState("");
+  const [customerName, setCustomerName] = useState(customer?.name ?? "");
+  const [customerPhone, setCustomerPhone] = useState(customer?.phone ?? "");
 
   const [submitting, setSubmitting] = useState(false);
   const [fieldError, setFieldError] = useState<string | null>(null);
   const [kitchenBumped, setKitchenBumped] = useState(false);
   const [confirmedBooking, setConfirmedBooking] = useState<Booking | null>(null);
+
+  // Sync auto-fill when customer logs in or logs out
+  useEffect(() => {
+    setCustomerName(customer?.name ?? "");
+    setCustomerPhone(customer?.phone ?? "");
+  }, [customer?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const { data: avail, loading: availLoading } = useAvailability(branch, session, date);
 
@@ -97,6 +107,7 @@ export function BookingForm() {
           partySize,
           customerName,
           customerPhone,
+          ...(customer?.id ? { customerId: customer.id } : {}),
         }),
       });
 
@@ -179,7 +190,7 @@ export function BookingForm() {
         </Field>
 
         {/* Date + time row */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2">
           <Field label={t("labelDate")} htmlFor="date">
             <input
               id="date"

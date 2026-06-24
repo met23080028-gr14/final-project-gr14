@@ -123,11 +123,37 @@ const en: Dictionary = {
   analyticsLunchSeries: "Lunch",
   analyticsDinnerSeries: "Dinner",
 
+  // ── Customer auth (prototype) ─────────────────────────────────────────────
+  loginTitle: "Sign In / Create Account",
+  loginSubtitle: "Enter your phone number to book faster",
+  loginPrototypeNote: "Prototype — no real passwords, for demo purposes only.",
+  loginLabelBirthday: "Birthday (optional)",
+  loginPlaceholderBirthday: "e.g. 06-25 (MM-DD)",
+  loginBtnSubmit: "Sign In / Register",
+  loginBtnGuest: "Continue as Guest",
+  loginErrPhone: "Please enter a valid phone number.",
+  loginErrName: "Please enter your full name.",
+  loginGreeting: "Hello",
+  logoutBtn: "Log Out",
+
+  // ── Birthday banner ───────────────────────────────────────────────────────
+  birthdayBannerTitle: "Happy Birthday!",
+  birthdayBannerBody: "Today is your birthday! Use the voucher code below to enjoy your birthday discount.",
+  birthdayBannerNote: "(Illustrative code — no real monetary value)",
+  birthdayBannerDismiss: "Got it",
+  birthdayVoucherLabel: "Voucher code",
+  birthdayDiscountLabel: "Discount",
+
+  // ── My bookings ───────────────────────────────────────────────────────────
+  myBookingsTitle: "My Bookings",
+  myBookingsEmpty: "You have no bookings yet.",
+
   // ── Misc ───────────────────────────────────────────────────────────────────
   loading: "Loading...",
   guests: "guests",
   tables: "tables",
   of: "/",
+  bookedLabel: "tables booked",
 };
 
 export default en;

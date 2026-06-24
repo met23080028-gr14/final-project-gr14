@@ -62,8 +62,8 @@ export function AvailabilityBadge({ data, loading }: Props) {
               style={{ width: `${Math.round(pct * 100)}%` }}
             />
           </div>
-          <span className="text-xs text-gray-400">
-            {data.booked} {t("tables")} booked
+          <span className="text-xs text-gray-600">
+            {data.booked} {t("bookedLabel")}
           </span>
         </div>
       </div>

@@ -61,7 +61,7 @@ export function BookingRow({ booking, allBookings, onConfirm, onAssign }: Props)
       <td className="px-4 py-3 text-sm font-medium">{booking.arrivalTime}</td>
       <td className="px-4 py-3 text-sm text-center">{booking.partySize}</td>
       <td className="px-4 py-3 text-sm font-medium">{booking.customerName}</td>
-      <td className="px-4 py-3 text-sm text-gray-500">{booking.customerPhone}</td>
+      <td className="hidden sm:table-cell px-4 py-3 text-sm text-gray-500">{booking.customerPhone}</td>
       <td className="px-4 py-3">
         <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${statusStyles[status]}`}>
           {statusLabel}
@@ -78,8 +78,8 @@ export function BookingRow({ booking, allBookings, onConfirm, onAssign }: Props)
           </button>
         )}
       </td>
-      {/* Table suggestion column */}
-      <td className="px-4 py-3 min-w-[200px] max-w-[260px]">
+      {/* Table suggestion column — hidden on mobile, visible from lg */}
+      <td className="hidden lg:table-cell px-4 py-3 min-w-[200px] max-w-[260px]">
         {showSuggestion && (
           <TableSuggestion
             booking={booking}

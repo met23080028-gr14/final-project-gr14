@@ -7,7 +7,7 @@ import { BookingRow } from "./BookingRow";
 import type { Booking } from "@/lib/types";
 
 export function BookingTable() {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
   const { bookings, loading, refresh } = useBookings();
   const [seeding, setSeeding] = useState(false);
   const [seedMsg, setSeedMsg] = useState<string | null>(null);
@@ -71,10 +71,15 @@ export function BookingTable() {
     <div className="space-y-4">
       {/* Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <div className={`h-2.5 w-2.5 rounded-full ${loading ? "bg-yellow-400 animate-pulse" : "bg-emerald-500"}`} />
-          <span className="text-xs text-gray-500">
-            {loading ? t("loading") : `${bookings.length} bookings`}
+        <div className="flex items-center gap-2" aria-live="polite" aria-atomic="true">
+          <div
+            className={`h-2.5 w-2.5 rounded-full transition-colors ${
+              loading ? "bg-brand-gold animate-pulse" : "bg-emerald-500"
+            }`}
+            aria-hidden="true"
+          />
+          <span className="text-xs text-gray-600">
+            {loading ? t("loading") : `${bookings.length} ${lang === "vi" ? "đặt bàn" : "bookings"}`}
           </span>
         </div>
         <div className="flex gap-2">
@@ -103,19 +108,24 @@ export function BookingTable() {
 
       {/* Table */}
       <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+        {/* Empty state — only after first load */}
         {bookings.length === 0 && !loading ? (
           <div className="flex flex-col items-center justify-center py-16 text-gray-400">
-            <span className="text-4xl">🦞</span>
+            <span className="text-4xl" aria-hidden="true">🦞</span>
             <p className="mt-3 text-sm">{t("adminEmptyState")}</p>
           </div>
         ) : (
           <table className="min-w-full text-left">
             <thead>
               <tr className="border-b border-gray-200 bg-gray-50">
-                {cols.map((col) => (
+                {cols.map((col, i) => (
                   <th
                     key={col}
-                    className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500 whitespace-nowrap"
+                    className={`px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500 whitespace-nowrap${
+                      i === 7 ? " hidden sm:table-cell" : "" // Phone col
+                    }${
+                      i === 10 ? " hidden lg:table-cell" : "" // Table Suggestion col
+                    }`}
                   >
                     {col}
                   </th>
@@ -123,15 +133,26 @@ export function BookingTable() {
               </tr>
             </thead>
             <tbody>
-              {bookings.map((b) => (
-                <BookingRow
-                  key={b.id}
-                  booking={b}
-                  allBookings={bookings}
-                  onConfirm={confirmBooking}
-                  onAssign={assignTables}
-                />
-              ))}
+              {/* Skeleton rows during initial load */}
+              {loading && bookings.length === 0
+                ? Array.from({ length: 4 }).map((_, i) => (
+                    <tr key={i} className="border-b border-gray-100">
+                      {Array.from({ length: 11 }).map((_, j) => (
+                        <td key={j} className={`px-4 py-3${j === 7 ? " hidden sm:table-cell" : ""}${j === 10 ? " hidden lg:table-cell" : ""}`}>
+                          <div className="h-4 animate-pulse rounded bg-gray-100" style={{ width: `${60 + (j * 17) % 40}px` }} />
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                : bookings.map((b) => (
+                    <BookingRow
+                      key={b.id}
+                      booking={b}
+                      allBookings={bookings}
+                      onConfirm={confirmBooking}
+                      onAssign={assignTables}
+                    />
+                  ))}
             </tbody>
           </table>
         )}

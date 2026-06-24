@@ -12,14 +12,20 @@ import { BRANCHES, SESSIONS } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const customerId = searchParams.get("customerId");
+
     const bookings = await getAllBookings();
-    // Apply lazy expiry before returning
     const resolved = bookings.map((b) => ({
       ...b,
       status: effectiveStatus(b),
     }));
+
+    if (customerId) {
+      return Response.json(resolved.filter((b) => b.customerId === customerId));
+    }
     return Response.json(resolved);
   } catch {
     return Response.json({ error: "Failed to fetch bookings" }, { status: 500 });
@@ -36,9 +42,10 @@ export async function POST(request: Request) {
       partySize: number;
       customerName: string;
       customerPhone: string;
+      customerId?: string;
     };
 
-    const { branch, session, date, arrivalTime, partySize, customerName, customerPhone } = body;
+    const { branch, session, date, arrivalTime, partySize, customerName, customerPhone, customerId } = body;
 
     // ── Validate inputs ──────────────────────────────────────────────────────
     if (
@@ -85,6 +92,7 @@ export async function POST(request: Request) {
       tablesNeeded: needed,
       customerName: customerName.trim(),
       customerPhone: customerPhone.replace(/\s/g, ""),
+      ...(customerId ? { customerId } : {}),
       status: "pending",
       createdAt: now,
       holdExpiresAt: computeHoldExpiry(finalDate, arrivalTime),

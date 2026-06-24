@@ -121,11 +121,37 @@ const vi = {
   analyticsLunchSeries: "Bữa trưa",
   analyticsDinnerSeries: "Bữa tối",
 
+  // ── Customer auth (prototype) ─────────────────────────────────────────────
+  loginTitle: "Đăng nhập / Tạo tài khoản",
+  loginSubtitle: "Nhập số điện thoại để đặt bàn nhanh hơn",
+  loginPrototypeNote: "Prototype — không dùng mật khẩu thực, chỉ mang tính minh hoạ.",
+  loginLabelBirthday: "Ngày sinh (không bắt buộc)",
+  loginPlaceholderBirthday: "Ví dụ: 06-25 (MM-DD)",
+  loginBtnSubmit: "Đăng nhập / Đăng ký",
+  loginBtnGuest: "Tiếp tục với tư cách khách",
+  loginErrPhone: "Vui lòng nhập số điện thoại hợp lệ.",
+  loginErrName: "Vui lòng nhập họ tên.",
+  loginGreeting: "Xin chào",
+  logoutBtn: "Đăng xuất",
+
+  // ── Birthday banner ───────────────────────────────────────────────────────
+  birthdayBannerTitle: "Chúc mừng sinh nhật!",
+  birthdayBannerBody: "Hôm nay là sinh nhật của bạn! Dùng mã voucher dưới đây để nhận ưu đãi sinh nhật.",
+  birthdayBannerNote: "(Mã minh hoạ — không có giá trị thực tế)",
+  birthdayBannerDismiss: "Đã hiểu",
+  birthdayVoucherLabel: "Mã voucher",
+  birthdayDiscountLabel: "Giảm",
+
+  // ── My bookings ───────────────────────────────────────────────────────────
+  myBookingsTitle: "Đặt bàn của tôi",
+  myBookingsEmpty: "Bạn chưa có đặt bàn nào.",
+
   // ── Misc ───────────────────────────────────────────────────────────────────
   loading: "Đang tải...",
   guests: "khách",
   tables: "bàn",
   of: "/",
+  bookedLabel: "bàn đã đặt",
 } satisfies Record<string, string>;
 
 /** All UI string keys — TypeScript enforces both dictionaries have every key. */

@@ -10,7 +10,7 @@
  *   deleteAllBookings()       → void
  */
 
-import type { Booking } from "./types";
+import type { Booking, Customer } from "./types";
 
 // ── Env-var detection ─────────────────────────────────────────────────────────
 
@@ -33,6 +33,8 @@ const useRedis = Boolean(getRedisUrl() && getRedisToken());
 // ── In-memory fallback ────────────────────────────────────────────────────────
 
 const memStore: Map<string, Booking> = new Map();
+// Customers keyed by phone (normalized, no spaces)
+const customersMap: Map<string, Customer> = new Map();
 
 // ── Upstash client (lazy-initialised only when env vars exist) ────────────────
 
@@ -51,6 +53,11 @@ async function getRedis(): Promise<import("@upstash/redis").Redis> {
 const KEYS = {
   ids: "poseidon:booking:ids",
   booking: (id: string) => `poseidon:booking:${id}`,
+};
+
+const CUSTOMER_KEYS = {
+  phones: "poseidon:customer:phones",
+  customer: (phone: string) => `poseidon:customer:${phone}`,
 };
 
 // ── Public API ────────────────────────────────────────────────────────────────
@@ -116,4 +123,27 @@ export async function deleteAllBookings(): Promise<void> {
   }
   pipeline.del(KEYS.ids);
   await pipeline.exec();
+}
+
+// ── Customer API ──────────────────────────────────────────────────────────────
+
+export async function getCustomerByPhone(phone: string): Promise<Customer | null> {
+  if (!useRedis) {
+    return customersMap.get(phone) ?? null;
+  }
+  const redis = await getRedis();
+  return redis.get<Customer>(CUSTOMER_KEYS.customer(phone));
+}
+
+export async function saveCustomer(customer: Customer): Promise<void> {
+  if (!useRedis) {
+    customersMap.set(customer.phone, customer);
+    return;
+  }
+  const redis = await getRedis();
+  const isNew = !(await redis.exists(CUSTOMER_KEYS.customer(customer.phone)));
+  await redis.set(CUSTOMER_KEYS.customer(customer.phone), customer);
+  if (isNew) {
+    await redis.lpush(CUSTOMER_KEYS.phones, customer.phone);
+  }
 }

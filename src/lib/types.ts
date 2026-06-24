@@ -24,6 +24,16 @@ export interface Session {
   endTime: string;
 }
 
+export interface Customer {
+  id: string;
+  name: string;
+  phone: string;
+  /** MM-DD format; empty string if customer skipped it */
+  birthday: string;
+  /** ISO 8601 */
+  createdAt: string;
+}
+
 export interface Booking {
   id: string;
   branch: BranchId;
@@ -36,6 +46,8 @@ export interface Booking {
   tablesNeeded: number;
   customerName: string;
   customerPhone: string;
+  /** Set when the customer was logged in at booking time */
+  customerId?: string;
   status: BookingStatus;
   /** ISO 8601 */
   createdAt: string;

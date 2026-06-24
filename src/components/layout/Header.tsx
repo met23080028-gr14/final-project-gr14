@@ -4,10 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslation } from "@/lib/i18n/context";
+import { useCustomerContext } from "@/lib/customer-context";
 import { LanguageToggle } from "./LanguageToggle";
 
 export function Header() {
   const { t } = useTranslation();
+  const { customer, loaded, logout } = useCustomerContext();
   const pathname = usePathname();
 
   return (
@@ -33,7 +35,7 @@ export function Header() {
           </div>
         </Link>
 
-        {/* Nav + language toggle */}
+        {/* Nav + auth + language toggle */}
         <div className="flex items-center gap-3">
           <nav className="flex items-center gap-1">
             <NavLink href="/" active={pathname === "/"}>
@@ -43,6 +45,25 @@ export function Header() {
               {t("navAdmin")}
             </NavLink>
           </nav>
+
+          {/* Customer greeting + logout */}
+          {loaded && customer && (
+            <div className="flex items-center gap-2">
+              {/* Greeting visible only on sm+ */}
+              <span className="hidden sm:inline text-sm text-white/80">
+                {t("loginGreeting")},{" "}
+                <span className="font-semibold text-white">{customer.name.split(" ")[0]}</span>
+              </span>
+              <button
+                onClick={logout}
+                aria-label={t("logoutBtn")}
+                className="rounded-md px-2.5 py-1 text-xs font-medium text-white/80 border border-white/30 hover:bg-white/10 hover:text-white transition-colors"
+              >
+                {t("logoutBtn")}
+              </button>
+            </div>
+          )}
+
           <LanguageToggle />
         </div>
       </div>

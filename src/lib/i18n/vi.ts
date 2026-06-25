@@ -81,7 +81,8 @@ const vi = {
   cancelConfirmPrompt: "Bạn có chắc muốn hủy đặt bàn này không?",
   cancelSuccess: "Đặt bàn đã được hủy thành công.",
   cancelTooLate:
-    "Không thể hủy trong vòng 2 giờ trước giờ đến. Vui lòng liên hệ nhà hàng.",
+    "Không thể hủy trong vòng 15 phút trước giờ đến. Vui lòng liên hệ nhà hàng.",
+  cancelCutoffNote: "Có thể hủy trước 15 phút trước giờ đến.",
   cancelledAlready: "Đặt bàn này đã được hủy.",
 
   // ── Status labels ──────────────────────────────────────────────────────────
@@ -118,6 +119,21 @@ const vi = {
   adminLoginLogoutBtn: "Đăng xuất quản trị",
   adminLoginPrototypeNote: "Prototype — thông tin đăng nhập demo: admin / poseidon123",
 
+  // ── Date filter (admin) ───────────────────────────────────────────────────
+  filterAll: "Tất cả ngày",
+  filterToday: "Hôm nay",
+  filterTomorrow: "Ngày mai",
+  filterByDate: "Lọc theo ngày",
+  filterPickDate: "Chọn ngày...",
+
+  // ── Guest lookup ──────────────────────────────────────────────────────────
+  guestLookupTitle: "Tra cứu đặt bàn",
+  guestLookupSubtitle: "Nhập mã đặt bàn để xem thông tin hoặc hủy",
+  guestLookupLabel: "Mã đặt bàn",
+  guestLookupPlaceholder: "VD: 18051800-X7",
+  guestLookupBtn: "Tra cứu",
+  guestLookupNotFound: "Không tìm thấy đặt bàn với mã này.",
+
   // ── Admin ──────────────────────────────────────────────────────────────────
   adminTitle: "Quản lý đặt bàn",
   adminSubtitle: "Buffet Poseidon",
@@ -146,8 +162,9 @@ const vi = {
   adminAvailCapacity: "Sức chứa",
   adminAvailBooked: "Đã đặt",
   adminAvailFree: "Còn trống",
-  adminBirthdayTitle: "Sắp sinh nhật (2 ngày tới)",
+  adminBirthdayTitle: "Sắp sinh nhật (7 ngày tới)",
   adminBirthdayEmpty: "Không có khách nào sắp sinh nhật.",
+  adminBirthdayVoucherIssued: "Hệ thống đã tự động cấp voucher sinh nhật 10%",
 
   // ── Errors / validation ────────────────────────────────────────────────────
   errRequired: "Vui lòng điền đầy đủ thông tin.",
@@ -177,7 +194,8 @@ const vi = {
   loginSubtitle: "Nhập số điện thoại để đặt bàn nhanh hơn",
   loginPrototypeNote: "Prototype — không dùng mật khẩu thực, chỉ mang tính minh hoạ.",
   loginLabelBirthday: "Ngày sinh (không bắt buộc)",
-  loginPlaceholderBirthday: "Ví dụ: 06-25 (MM-DD)",
+  loginPlaceholderBirthday: "Ví dụ: 02-07 (DD-MM)",
+  errInvalidBirthday: "Ngày sinh không hợp lệ (DD-MM, ví dụ: 02-07)",
   loginLabelPassword: "Mật khẩu (minh hoạ)",
   loginPlaceholderPassword: "Nhập mật khẩu (ít nhất 6 ký tự)",
   loginErrPassword: "Mật khẩu phải có ít nhất 6 ký tự.",
@@ -190,8 +208,8 @@ const vi = {
   logoutBtn: "Đăng xuất",
 
   // ── Birthday banner ───────────────────────────────────────────────────────
-  birthdayBannerTitle: "Chúc mừng sinh nhật!",
-  birthdayBannerBody: "Hôm nay là sinh nhật của bạn! Dùng mã voucher dưới đây để nhận ưu đãi sinh nhật.",
+  birthdayBannerTitle: "Mừng tuần lễ sinh nhật của bạn!",
+  birthdayBannerBody: "Tặng bạn ưu đãi giảm 10%, áp dụng 1 lần trong tuần sinh nhật (7 ngày).",
   birthdayBannerNote: "(Mã minh hoạ — không có giá trị thực tế)",
   birthdayBannerDismiss: "Đã hiểu",
   birthdayVoucherLabel: "Mã voucher",
@@ -273,14 +291,21 @@ const vi = {
   notifTitle: "Thông báo",
   notifBookingUpdate: "Cập nhật đặt bàn",
   notifEmpty: "Chưa có thông báo.",
+  notifBirthdayVoucher: "Voucher sinh nhật đang chờ bạn! 🎂",
+  notifBirthdayVoucherBody: "Sinh nhật của bạn sắp đến — giảm 10%, không yêu cầu chi tiêu tối thiểu. Xem trong Ví ưu đãi.",
+  notifBellLabel: "Thông báo",
 
   // ── Wallet section ────────────────────────────────────────────────────────
   walletProtoLabel: "Bản mẫu / Prototype",
   walletBirthdayTag: "Sinh nhật",
   walletSampleTag: "Voucher mẫu",
+  walletMemberTag: "Thành viên",
   walletOff: "giảm",
   walletMinSpend: "Không yêu cầu chi tiêu tối thiểu",
+  walletMinSpendAmount: "Từ 1.000.000đ",
   walletExpiry: "HSD",
+  walletBirthdayWeekDesc: "Giảm 10% trong tuần sinh nhật — không yêu cầu chi tiêu tối thiểu",
+  walletMemberDesc: "Áp dụng cho hoá đơn từ 1.000.000đ",
 
   // ── Linked accounts section ───────────────────────────────────────────────
   linkedProto: "Bản mẫu — các nút dưới không thực hiện kết nối thực",
@@ -392,6 +417,39 @@ const vi = {
 
   // ── Booking page (/dat-ban) ───────────────────────────────────────────────
   datBanPageTitle: "Đặt bàn tại Poseidon",
+
+  // ── Voucher terms modal ───────────────────────────────────────────────────
+  voucherTermsTitle: "Điều kiện áp dụng",
+  voucherTermsBirthdayTerms: "Giảm 10% toàn hoá đơn, không yêu cầu giá trị tối thiểu. Áp dụng 1 lần trong tuần lễ sinh nhật (7 ngày). Không áp dụng đồng thời ưu đãi khác.",
+  voucherTermsMemberTerms: "Giảm 10% cho hoá đơn từ 1.000.000đ. Áp dụng 1 lần. Không áp dụng cùng ưu đãi/voucher khác. Không quy đổi thành tiền mặt.",
+  voucherTermsClose: "Đóng",
+  voucherTermsIllustrative: "Voucher mang tính minh hoạ — không có giá trị sử dụng thực tế.",
+  voucherClickToSeeTerms: "Xem điều khoản",
+
+  // ── Guest policy checkbox ─────────────────────────────────────────────────
+  guestPrivacyLabel: "Tôi đã đọc và đồng ý với",
+  guestPrivacyLinkText: "Chính sách bảo mật",
+  errPrivacyRequired: "Bạn cần đồng ý với Chính sách bảo mật để tiếp tục.",
+
+  // ── Static content pages ──────────────────────────────────────────────────
+  aboutPageTitle: "Về chúng tôi",
+  privacyPolicyTitle: "Chính sách bảo mật dữ liệu",
+
+  // ── Confirmation notes display ────────────────────────────────────────────
+  confirmationNotes: "Ghi chú",
+
+  // ── Menu detail section ───────────────────────────────────────────────────
+  menuDetailTitle: "Thực đơn chi tiết",
+  menuDetailNote: "Một số món thay đổi theo mùa và theo cơ sở.",
+
+  // ── Customer reliability (rule-based, no ML) ─────────────────────────────
+  reliabilityLabel: "Uy tín đặt bàn",
+  reliabilityGood: "Tốt",
+  reliabilityMedium: "Trung bình",
+  reliabilityPoor: "Cần lưu ý",
+  adminNoShowBadgePrefix: "Khách từng không đến",
+  adminReliabilityScore: "Uy tín",
+  reliabilityProtoNote: "Chỉ số dựa trên lịch sử đặt bàn của bạn — minh hoạ, không dùng ML",
 
   // ── Misc ───────────────────────────────────────────────────────────────────
   loading: "Đang tải...",

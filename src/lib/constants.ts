@@ -4,8 +4,8 @@ export const TIMEZONE = "Asia/Ho_Chi_Minh";
 
 export const HOLD_MINUTES = 15;
 
-/** Customers may cancel up to this many hours before their arrival time */
-export const CANCEL_CUTOFF_HOURS = 2;
+/** Customers may cancel up until this many minutes before their arrival time */
+export const CANCEL_CUTOFF_MINUTES = 15;
 
 /** Number of guests that share one table */
 export const GUESTS_PER_TABLE = 4;

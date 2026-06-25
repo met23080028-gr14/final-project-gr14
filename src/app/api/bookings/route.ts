@@ -7,6 +7,7 @@ import {
   computeHoldExpiry,
   resolveBookingDate,
   effectiveStatus,
+  makeBookingCode,
 } from "@/lib/booking-utils";
 import { BRANCHES, SESSIONS } from "@/lib/constants";
 
@@ -16,6 +17,9 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const customerId = searchParams.get("customerId");
+    const code = searchParams.get("code");
+
+    const phone = searchParams.get("phone");
 
     const bookings = await getAllBookings();
     const resolved = bookings.map((b) => ({
@@ -25,6 +29,17 @@ export async function GET(request: Request) {
 
     if (customerId) {
       return Response.json(resolved.filter((b) => b.customerId === customerId));
+    }
+    if (phone) {
+      return Response.json(resolved.filter((b) => b.customerPhone === phone));
+    }
+    if (code) {
+      const normalised = code.trim().toUpperCase();
+      const match = resolved.find(
+        (b) => makeBookingCode(b.date, b.arrivalTime, b.id).toUpperCase() === normalised
+      );
+      if (!match) return Response.json({ error: "Not found" }, { status: 404 });
+      return Response.json(match);
     }
     return Response.json(resolved);
   } catch {

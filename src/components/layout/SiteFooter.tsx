@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useTranslation } from "@/lib/i18n/context";
 
 export function SiteFooter() {
@@ -62,6 +63,10 @@ export function SiteFooter() {
             </div>
           </div>
 
+          <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-[10px] text-white/35">
+            <Link href="/ve-chung-toi" className="hover:text-white/60 transition-colors">{t("navAbout")}</Link>
+            <Link href="/chinh-sach" className="hover:text-white/60 transition-colors">{t("privacyPolicyTitle")}</Link>
+          </div>
           <p className="text-[10px] text-white/30">{t("footerPhotoCredit")}</p>
           <p className="text-[10px] text-white/20">© {new Date().getFullYear()} Buffet Poseidon</p>
         </div>

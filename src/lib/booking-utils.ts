@@ -2,7 +2,7 @@ import type { Booking, BranchId, SessionId, AvailabilityResult } from "./types";
 import {
   TIMEZONE,
   HOLD_MINUTES,
-  CANCEL_CUTOFF_HOURS,
+  CANCEL_CUTOFF_MINUTES,
   GUESTS_PER_TABLE,
   CAPACITY,
   SESSION_MAP,
@@ -147,7 +147,7 @@ export function canCancel(b: Booking): boolean {
   const s = effectiveStatus(b);
   if (s === "cancelled" || s === "expired") return false;
   const arrival = hcmDatetime(b.date, b.arrivalTime);
-  const cutoff = new Date(arrival.getTime() - CANCEL_CUTOFF_HOURS * 3600 * 1000);
+  const cutoff = new Date(arrival.getTime() - CANCEL_CUTOFF_MINUTES * 60 * 1000);
   return new Date() < cutoff;
 }
 
@@ -158,4 +158,37 @@ export function makeBookingCode(date: string, arrivalTime: string, id: string): 
   const [, mm, dd] = date.split("-");
   const [hh, min] = arrivalTime.split(":");
   return `${dd}${mm}${hh}${min}-${id.slice(-2).toUpperCase()}`;
+}
+
+// ── Customer reliability (rule-based, derived — no separate store) ─────────────
+
+export interface CustomerReliability {
+  completedCount: number;
+  noShowCount: number;
+  totalDue: number;
+  /** 0..1; defaults to 1 when no history. */
+  score: number;
+  /** Neutral key for i18n lookup: "good" | "medium" | "poor". */
+  label: "good" | "medium" | "poor";
+}
+
+/**
+ * Computes a customer's reliability from existing bookings.
+ * Keyed by phone so it works for guests and registered customers alike.
+ * Pure function — does not mutate or store anything.
+ */
+export function getCustomerReliability(
+  phone: string,
+  allBookings: Booking[]
+): CustomerReliability {
+  const phoneBookings = allBookings.filter((b) => b.customerPhone === phone);
+  const completedCount = phoneBookings.filter((b) => b.status === "arrived").length;
+  const noShowCount = phoneBookings.filter((b) => b.status === "no_show").length;
+  const totalDue = completedCount + noShowCount;
+  const score = totalDue > 0 ? completedCount / totalDue : 1;
+  const label: CustomerReliability["label"] =
+    totalDue === 0 || score >= 0.8 ? "good" :
+    score >= 0.5 ? "medium" :
+    "poor";
+  return { completedCount, noShowCount, totalDue, score, label };
 }

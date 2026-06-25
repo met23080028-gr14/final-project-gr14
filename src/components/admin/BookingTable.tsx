@@ -5,8 +5,11 @@ import { useTranslation } from "@/lib/i18n/context";
 import { useBookings } from "@/hooks/useBookings";
 import { BookingRow } from "./BookingRow";
 import { BRANCHES, SESSIONS } from "@/lib/constants";
-import { computeAvailability, todayHCM, nowInHCM } from "@/lib/booking-utils";
+import { computeAvailability, todayHCM, nowInHCM, formatDateLocal } from "@/lib/booking-utils";
+import { formatBirthday } from "@/lib/voucher";
 import type { Booking, Customer } from "@/lib/types";
+
+type DateFilter = "all" | "today" | "tomorrow" | "custom";
 
 export function BookingTable() {
   const { t, lang } = useTranslation();
@@ -14,6 +17,8 @@ export function BookingTable() {
   const [seeding, setSeeding] = useState(false);
   const [seedMsg, setSeedMsg] = useState<string | null>(null);
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [dateFilter, setDateFilter] = useState<DateFilter>("all");
+  const [customDate, setCustomDate] = useState("");
 
   // Load customers for birthday panel
   useEffect(() => {
@@ -97,6 +102,18 @@ export function BookingTable() {
     }
   }
 
+  const today = todayHCM();
+  const tomorrow = formatDateLocal(
+    (() => { const d = nowInHCM(); d.setDate(d.getDate() + 1); return d; })()
+  );
+
+  const filteredBookings = bookings.filter((b) => {
+    if (dateFilter === "today") return b.date === today;
+    if (dateFilter === "tomorrow") return b.date === tomorrow;
+    if (dateFilter === "custom" && customDate) return b.date === customDate;
+    return true;
+  });
+
   const cols = [
     t("adminColId"),
     t("adminColBranch"),
@@ -119,6 +136,35 @@ export function BookingTable() {
       {/* Availability summary */}
       <AvailabilityPanel bookings={bookings} />
 
+      {/* Date filter */}
+      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
+        <span className="text-xs font-semibold text-gray-500 shrink-0">{t("filterByDate")}:</span>
+        {(["all", "today", "tomorrow"] as const).map((f) => (
+          <button
+            key={f}
+            onClick={() => setDateFilter(f)}
+            className={`rounded-lg px-3 py-1 text-xs font-semibold transition-colors ${
+              dateFilter === f
+                ? "bg-brand-red text-white"
+                : "border border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100"
+            }`}
+          >
+            {f === "all" ? t("filterAll") : f === "today" ? t("filterToday") : t("filterTomorrow")}
+          </button>
+        ))}
+        <input
+          type="date"
+          value={customDate}
+          onChange={(e) => { setCustomDate(e.target.value); setDateFilter("custom"); }}
+          className={`rounded-lg border px-2 py-1 text-xs transition-colors ${
+            dateFilter === "custom"
+              ? "border-brand-red text-gray-900"
+              : "border-gray-200 text-gray-500"
+          }`}
+          aria-label={t("filterPickDate")}
+        />
+      </div>
+
       {/* Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2" aria-live="polite" aria-atomic="true">
@@ -129,7 +175,7 @@ export function BookingTable() {
             aria-hidden="true"
           />
           <span className="text-xs text-gray-600">
-            {loading ? t("loading") : `${bookings.length} ${lang === "vi" ? "đặt bàn" : "bookings"}`}
+            {loading ? t("loading") : `${filteredBookings.length}${dateFilter !== "all" ? `/${bookings.length}` : ""} ${lang === "vi" ? "đặt bàn" : "bookings"}`}
           </span>
         </div>
         <div className="flex gap-2">
@@ -158,7 +204,7 @@ export function BookingTable() {
 
       {/* Table */}
       <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
-        {bookings.length === 0 && !loading ? (
+        {filteredBookings.length === 0 && !loading ? (
           <div className="flex flex-col items-center justify-center py-16 text-gray-400">
             <span className="text-4xl" aria-hidden="true">🦞</span>
             <p className="mt-3 text-sm">{t("adminEmptyState")}</p>
@@ -182,7 +228,7 @@ export function BookingTable() {
               </tr>
             </thead>
             <tbody>
-              {loading && bookings.length === 0
+              {loading && filteredBookings.length === 0
                 ? Array.from({ length: 4 }).map((_, i) => (
                     <tr key={i} className="border-b border-gray-100">
                       {Array.from({ length: 11 }).map((_, j) => (
@@ -192,7 +238,7 @@ export function BookingTable() {
                       ))}
                     </tr>
                   ))
-                : bookings.map((b) => (
+                : filteredBookings.map((b) => (
                     <BookingRow
                       key={b.id}
                       booking={b}
@@ -272,7 +318,7 @@ function AvailabilityPanel({ bookings }: { bookings: Booking[] }) {
 // ── Birthday alert panel ──────────────────────────────────────────────────────
 
 function BirthdayAlertPanel({ customers }: { customers: Customer[] }) {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
 
   const upcoming = upcomingBirthdays(customers);
   if (upcoming.length === 0) return null;
@@ -285,11 +331,21 @@ function BirthdayAlertPanel({ customers }: { customers: Customer[] }) {
       </h2>
       <ul className="space-y-2">
         {upcoming.map((c) => (
-          <li key={c.id} className="flex items-center gap-3 rounded-lg border border-pink-200 bg-white px-3 py-2 text-sm shadow-sm">
-            <span className="text-lg" aria-hidden>🎉</span>
-            <div>
-              <p className="font-semibold text-gray-900">{c.name}</p>
-              <p className="text-xs text-gray-500">{c.phone} · {c.birthday}</p>
+          <li key={c.id} className="flex items-start gap-3 rounded-lg border border-pink-200 bg-white px-3 py-2.5 text-sm shadow-sm">
+            <span className="mt-0.5 text-lg shrink-0" aria-hidden>🎉</span>
+            <div className="min-w-0">
+              <p className="font-semibold text-gray-900">
+                {c.name}
+                <span className="ml-2 text-xs font-normal text-gray-400">({formatBirthday(c.birthday)})</span>
+              </p>
+              <p className="text-xs text-gray-500">{c.phone}</p>
+              <p className="mt-0.5 font-mono text-[10px] text-gray-400">
+                {lang === "vi" ? "Mã tài khoản" : "Customer ID"}: {c.id}
+              </p>
+              <p className="mt-1 flex items-center gap-1 text-[11px] text-pink-600">
+                <span>🎁</span>
+                {t("adminBirthdayVoucherIssued")}
+              </p>
             </div>
           </li>
         ))}
@@ -298,7 +354,7 @@ function BirthdayAlertPanel({ customers }: { customers: Customer[] }) {
   );
 }
 
-/** Returns customers whose birthday (MM-DD) falls within the next 2 days in HCM time. */
+/** Returns customers whose birthday (MM-DD) falls within the next 7 days in HCM time. */
 function upcomingBirthdays(customers: Customer[]): Customer[] {
   const now = nowInHCM();
   const results: Customer[] = [];
@@ -307,7 +363,7 @@ function upcomingBirthdays(customers: Customer[]): Customer[] {
     if (!c.birthday || !/^\d{2}-\d{2}$/.test(c.birthday)) continue;
     const [mm, dd] = c.birthday.split("-").map(Number);
 
-    for (let offset = 0; offset <= 2; offset++) {
+    for (let offset = 0; offset <= 7; offset++) {
       const check = new Date(now);
       check.setDate(check.getDate() + offset);
       if (check.getMonth() + 1 === mm && check.getDate() === dd) {

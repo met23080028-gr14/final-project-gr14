@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslation } from "@/lib/i18n/context";
 import { BRANCH_MAP, SESSION_MAP } from "@/lib/constants";
-import { effectiveStatus, makeBookingCode, isOverdue } from "@/lib/booking-utils";
+import { effectiveStatus, makeBookingCode, isOverdue, getCustomerReliability } from "@/lib/booking-utils";
 import { TableSuggestion } from "./TableSuggestion";
 import type { Booking } from "@/lib/types";
 
@@ -36,6 +36,7 @@ export function BookingRow({ booking, allBookings, onConfirm, onArrive, onNoShow
   const overdue = isOverdue(booking);
   const branch = BRANCH_MAP[booking.branch];
   const session = SESSION_MAP[booking.session];
+  const reliability = getCustomerReliability(booking.customerPhone, allBookings);
 
   const branchShort = lang === "vi"
     ? branch.nameVi.replace("Poseidon ", "")
@@ -75,8 +76,22 @@ export function BookingRow({ booking, allBookings, onConfirm, onArrive, onNoShow
       <td className="px-4 py-3 text-sm font-medium">
         <div>{booking.customerName}</div>
         {booking.notes && (
-          <div className="mt-0.5 text-xs text-gray-400 italic max-w-[120px] truncate" title={booking.notes}>
-            {booking.notes}
+          <div
+            className="mt-1 max-w-[160px] rounded bg-amber-50 px-2 py-0.5 text-xs text-amber-800"
+            title={booking.notes}
+          >
+            📝 {booking.notes}
+          </div>
+        )}
+        {reliability.noShowCount >= 1 && (
+          <div className="mt-1.5 space-y-0.5">
+            <span className="inline-flex items-center gap-1 rounded bg-orange-100 px-2 py-0.5 text-xs font-semibold text-orange-800">
+              <span aria-hidden>⚠</span>
+              {t("adminNoShowBadgePrefix")} ({reliability.noShowCount}×)
+            </span>
+            <div className="text-xs text-gray-500">
+              {t("adminReliabilityScore")}: {reliability.completedCount}/{reliability.totalDue}
+            </div>
           </div>
         )}
       </td>

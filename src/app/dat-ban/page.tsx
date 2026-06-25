@@ -5,6 +5,7 @@ import { useCustomerContext } from "@/lib/customer-context";
 import { BirthdayBanner } from "@/components/customer/BirthdayBanner";
 import { MyBookings } from "@/components/customer/MyBookings";
 import { BookingForm } from "@/components/customer/BookingForm";
+import { GuestLookup } from "@/components/customer/GuestLookup";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import Link from "next/link";
 import { Phone } from "lucide-react";
@@ -41,6 +42,7 @@ export default function DatBanPage() {
         {customer && <BirthdayBanner customer={customer} />}
         {!customer && <MembershipBanner />}
         {customer && <MyBookings customerId={customer.id} />}
+        {!customer && <GuestLookup />}
 
         <section id="booking" className="scroll-mt-20">
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">

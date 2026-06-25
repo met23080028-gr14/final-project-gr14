@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "@/lib/i18n/context";
 import { useCustomerContext } from "@/lib/customer-context";
+import { parseBirthdayInput } from "@/lib/voucher";
 import type { Customer } from "@/lib/types";
 
 const PHONE_RE = /^0\d{9}$/;
@@ -37,6 +38,9 @@ export default function LoginPage() {
       if (!value) return t("errFieldRequired");
       if (value.length < 6) return t("loginErrPassword");
     }
+    if (field === "birthday") {
+      if (value.trim() && parseBirthdayInput(value) === null) return t("errInvalidBirthday");
+    }
     return "";
   }
 
@@ -60,17 +64,21 @@ export default function LoginPage() {
       phone: validateField("phone", phone),
       name: validateField("name", name),
       password: validateField("password", password),
+      birthday: validateField("birthday", birthday),
     };
-    setTouched({ phone: true, name: true, password: true });
+    setTouched({ phone: true, name: true, password: true, birthday: true });
     setInlineErrors(allErrors);
-    if (allErrors.phone || allErrors.name || allErrors.password) return;
+    if (allErrors.phone || allErrors.name || allErrors.password || allErrors.birthday) return;
+
+    // Convert DD-MM display format → MM-DD for internal storage
+    const birthdayInternal = birthday.trim() ? parseBirthdayInput(birthday)! : "";
 
     setSubmitting(true);
     try {
       const res = await fetch("/api/customers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, name, birthday }),
+        body: JSON.stringify({ phone, name, birthday: birthdayInternal }),
       });
       const data = (await res.json()) as Customer & { error?: string };
       if (!res.ok) {
@@ -187,11 +195,15 @@ export default function LoginPage() {
                 id="lp-birthday"
                 type="text"
                 value={birthday}
-                onChange={(e) => setBirthday(e.target.value)}
+                onChange={(e) => handleChange("birthday", e.target.value, setBirthday)}
+                onBlur={(e) => handleBlur("birthday", e.target.value)}
                 placeholder={t("loginPlaceholderBirthday")}
                 maxLength={5}
-                className={inputCls}
+                className={inlineErrors.birthday ? errorInputCls : inputCls}
               />
+              {inlineErrors.birthday && (
+                <p className="text-xs text-red-600">{inlineErrors.birthday}</p>
+              )}
             </div>
 
             {submitError && (

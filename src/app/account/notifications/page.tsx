@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bell } from "lucide-react";
+import Link from "next/link";
+import { Bell, Gift } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/context";
 import { useCustomerContext } from "@/lib/customer-context";
+import { isBirthdayWeek } from "@/lib/voucher";
 import { BRANCH_MAP, SESSION_MAP } from "@/lib/constants";
 import { makeBookingCode } from "@/lib/booking-utils";
 import type { Booking } from "@/lib/types";
@@ -47,6 +49,8 @@ export default function NotificationsPage() {
 
   if (!customer) return null;
 
+  const hasBirthdayVoucher = Boolean(customer.birthday && isBirthdayWeek(customer.birthday));
+
   const statusLabel = (s: Booking["status"]) => ({
     pending:   t("statusPending"),
     confirmed: t("statusConfirmed"),
@@ -56,6 +60,8 @@ export default function NotificationsPage() {
     cancelled: t("statusCancelled"),
     expired:   t("statusExpired"),
   })[s];
+
+  const hasAny = hasBirthdayVoucher || bookings.length > 0;
 
   return (
     <div className="space-y-6">
@@ -67,13 +73,32 @@ export default function NotificationsPage() {
       <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
         {loading ? (
           <div className="px-5 py-10 text-center text-sm text-gray-400">{t("loading")}</div>
-        ) : bookings.length === 0 ? (
+        ) : !hasAny ? (
           <div className="flex flex-col items-center gap-3 px-5 py-12 text-center">
             <Bell size={32} className="text-gray-200" />
             <p className="text-sm text-gray-400">{t("notifEmpty")}</p>
           </div>
         ) : (
           <ul className="divide-y divide-gray-50">
+            {/* Birthday voucher notification — pinned at top */}
+            {hasBirthdayVoucher && (
+              <li className="flex items-start gap-4 bg-pink-50 px-5 py-4">
+                <span className="mt-0.5 text-xl leading-none">🎂</span>
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-pink-800">{t("notifBirthdayVoucher")}</p>
+                  <p className="mt-0.5 text-xs text-pink-700">{t("notifBirthdayVoucherBody")}</p>
+                  <Link
+                    href="/account/wallet"
+                    className="mt-1.5 inline-flex items-center gap-1 text-xs font-semibold text-pink-600 hover:underline"
+                  >
+                    <Gift size={12} />
+                    {t("accountWallet")}
+                  </Link>
+                </div>
+              </li>
+            )}
+
+            {/* Booking status updates */}
             {bookings.map((b) => {
               const branch = BRANCH_MAP[b.branch];
               const session = SESSION_MAP[b.session];

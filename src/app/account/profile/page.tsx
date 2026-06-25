@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { Lock } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/context";
 import { useCustomerContext } from "@/lib/customer-context";
+import { parseBirthdayInput, formatBirthday } from "@/lib/voucher";
+import { getCustomerReliability, type CustomerReliability } from "@/lib/booking-utils";
+import type { Booking } from "@/lib/types";
 
 const inputCls =
   "w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none transition-colors focus:border-brand-red focus:ring-1 focus:ring-brand-red";
@@ -17,29 +20,57 @@ export default function ProfilePage() {
 
   const [gender, setGender] = useState<"male" | "female" | "other" | "">("");
   const [birthday, setBirthday] = useState("");
+  const [birthdayError, setBirthdayError] = useState("");
   const [email, setEmail] = useState("");
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ text: string; ok: boolean } | null>(null);
+  const [reliability, setReliability] = useState<CustomerReliability | null>(null);
 
-  // Initialise from customer on mount
+  // Initialise from customer — stored as MM-DD, displayed as DD-MM
   useEffect(() => {
     if (customer) {
       setGender((customer.gender ?? "") as typeof gender);
-      setBirthday(customer.birthday ?? "");
+      setBirthday(customer.birthday ? formatBirthday(customer.birthday) : "");
       setEmail(customer.email ?? "");
     }
+  }, [customer]);
+
+  // Fetch this customer's own bookings to compute reliability
+  useEffect(() => {
+    if (!customer) return;
+    let cancelled = false;
+    fetch(`/api/bookings?phone=${encodeURIComponent(customer.phone)}`)
+      .then((r) => r.ok ? r.json() as Promise<Booking[]> : Promise.reject())
+      .then((bookings) => {
+        if (!cancelled) setReliability(getCustomerReliability(customer.phone, bookings));
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
   }, [customer]);
 
   if (!customer) return null;
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
-    setSaving(true);
     setMsg(null);
+
+    // Validate and convert birthday from DD-MM display → MM-DD storage
+    let birthdayInternal = "";
+    if (birthday.trim()) {
+      const parsed = parseBirthdayInput(birthday);
+      if (!parsed) {
+        setBirthdayError(t("errInvalidBirthday"));
+        return;
+      }
+      birthdayInternal = parsed;
+    }
+    setBirthdayError("");
+
+    setSaving(true);
     try {
       await updateCustomer({
         gender: gender || undefined,
-        birthday,
+        birthday: birthdayInternal,
         email,
       });
       setMsg({ text: t("profileSaveSuccess"), ok: true });
@@ -73,6 +104,28 @@ export default function ProfilePage() {
           <Field label={t("profileCustomerId")} hint={<ReadOnlyHint />}>
             <input readOnly value={customer.id} className={`${readOnlyCls} font-mono text-xs`} />
           </Field>
+
+          {reliability && (
+            <Field label={t("reliabilityLabel")} hint={<ReadOnlyHint />}>
+              <div className={`${readOnlyCls} flex flex-col gap-1`}>
+                <span className={`font-semibold ${
+                  reliability.label === "good" ? "text-emerald-700" :
+                  reliability.label === "medium" ? "text-amber-700" :
+                  "text-orange-700"
+                }`}>
+                  {reliability.label === "good" ? t("reliabilityGood") :
+                   reliability.label === "medium" ? t("reliabilityMedium") :
+                   t("reliabilityPoor")}
+                  {reliability.totalDue > 0 && (
+                    <span className="ml-2 font-normal text-gray-500">
+                      ({reliability.completedCount}/{reliability.totalDue})
+                    </span>
+                  )}
+                </span>
+                <span className="text-[11px] text-gray-400">{t("reliabilityProtoNote")}</span>
+              </div>
+            </Field>
+          )}
         </div>
 
         <div className="border-t border-gray-100 pt-5">
@@ -100,11 +153,12 @@ export default function ProfilePage() {
               <input
                 type="text"
                 value={birthday}
-                onChange={(e) => setBirthday(e.target.value)}
-                placeholder="06-25"
+                onChange={(e) => { setBirthday(e.target.value); setBirthdayError(""); }}
+                placeholder="02-07"
                 maxLength={5}
-                className={inputCls}
+                className={birthdayError ? "w-full rounded-lg border border-red-500 ring-1 ring-red-500 px-3 py-2.5 text-sm outline-none transition-colors" : inputCls}
               />
+              {birthdayError && <p className="mt-1 text-xs text-red-600">{birthdayError}</p>}
             </Field>
 
             {/* Email */}

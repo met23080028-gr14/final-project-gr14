@@ -7,7 +7,7 @@ import { useTranslation } from "@/lib/i18n/context";
 import { HoldCountdown } from "./HoldCountdown";
 import { BookingQR } from "./BookingQR";
 import { BRANCH_MAP, SESSION_MAP } from "@/lib/constants";
-import { makeBookingCode } from "@/lib/booking-utils";
+import { canCancel, makeBookingCode } from "@/lib/booking-utils";
 import type { Booking } from "@/lib/types";
 
 interface Props {
@@ -170,6 +170,9 @@ export function ConfirmationModal({ booking, isGuest, onClose, onCancel }: Props
                 </span>
               }
             />
+            {booking.notes && (
+              <Detail label={t("confirmationNotes")} value={booking.notes} colSpan />
+            )}
           </dl>
 
           {/* Notice line */}
@@ -200,7 +203,11 @@ export function ConfirmationModal({ booking, isGuest, onClose, onCancel }: Props
           {/* Cancel section */}
           {(booking.status === "pending" || booking.status === "confirmed") && (
             <div>
-              {!showCancelConfirm ? (
+              {!canCancel(booking) ? (
+                <div className="rounded-lg border border-orange-200 bg-orange-50 px-4 py-2.5 text-sm text-orange-700">
+                  {t("cancelTooLate")}
+                </div>
+              ) : !showCancelConfirm ? (
                 <button
                   onClick={() => setShowCancelConfirm(true)}
                   className="w-full rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100 transition-colors"

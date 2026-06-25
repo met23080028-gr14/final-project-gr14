@@ -4,10 +4,12 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Phone, Menu, X } from "lucide-react";
+import { Bell, Phone, Menu, X } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/context";
 import { useCustomerContext } from "@/lib/customer-context";
+import { isBirthdayWeek } from "@/lib/voucher";
 import { LanguageToggle } from "./LanguageToggle";
+import type { Customer } from "@/lib/types";
 
 export function Header() {
   const { t } = useTranslation();
@@ -17,6 +19,7 @@ export function Header() {
 
   const topLinks = [
     { href: "/", label: t("navHome") },
+    { href: "/ve-chung-toi", label: t("navAbout") },
     { href: "/gia-buffet", label: t("navPricing") },
     { href: "/menu", label: t("navMenuLink") },
     { href: "/chi-nhanh", label: t("navBranches") },
@@ -91,15 +94,19 @@ export function Header() {
 
           {/* Auth area — desktop only */}
           {loaded && customer ? (
-            <Link
-              href="/account"
-              className="hidden items-center gap-2 rounded-lg border border-white/25 px-2.5 py-1.5 text-xs font-semibold text-white/90 transition-colors hover:border-white/50 hover:bg-white/10 md:flex"
-            >
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/25 text-[11px] font-bold">
-                {customer.name.charAt(0).toUpperCase()}
-              </span>
-              <span className="hidden lg:inline">{customer.name.split(" ").at(-1)}</span>
-            </Link>
+            <div className="hidden items-center gap-1 md:flex">
+              {/* Notification bell */}
+              <NotificationBell customer={customer} />
+              <Link
+                href="/account"
+                className="flex items-center gap-2 rounded-lg border border-white/25 px-2.5 py-1.5 text-xs font-semibold text-white/90 transition-colors hover:border-white/50 hover:bg-white/10"
+              >
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/25 text-[11px] font-bold">
+                  {customer.name.charAt(0).toUpperCase()}
+                </span>
+                <span className="hidden lg:inline">{customer.name.split(" ").at(-1)}</span>
+              </Link>
+            </div>
           ) : (
             <Link
               href="/login"
@@ -180,6 +187,17 @@ export function Header() {
                   <span className="font-semibold text-white/80">{customer.name}</span>
                 </p>
                 <Link
+                  href="/account/notifications"
+                  onClick={closeMobile}
+                  className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+                >
+                  <Bell size={16} />
+                  {t("notifBellLabel")}
+                  {customer.birthday && isBirthdayWeek(customer.birthday) && (
+                    <span className="ml-auto flex h-4 w-4 items-center justify-center rounded-full bg-brand-gold text-[9px] font-black text-brand-red">1</span>
+                  )}
+                </Link>
+                <Link
                   href="/account"
                   onClick={closeMobile}
                   className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white"
@@ -236,6 +254,27 @@ function NavLink({
       }`}
     >
       {children}
+    </Link>
+  );
+}
+
+function NotificationBell({ customer }: { customer: Customer }) {
+  const { t } = useTranslation();
+  const hasBirthdayVoucher = Boolean(customer.birthday && isBirthdayWeek(customer.birthday));
+  const badgeCount = hasBirthdayVoucher ? 1 : 0;
+
+  return (
+    <Link
+      href="/account/notifications"
+      aria-label={t("notifBellLabel")}
+      className="relative flex h-8 w-8 items-center justify-center rounded-lg text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+    >
+      <Bell size={17} />
+      {badgeCount > 0 && (
+        <span className="absolute right-0.5 top-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-brand-gold text-[8px] font-black text-brand-red">
+          {badgeCount}
+        </span>
+      )}
     </Link>
   );
 }

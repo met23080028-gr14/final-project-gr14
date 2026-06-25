@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useTranslation } from "@/lib/i18n/context";
 import { useAvailability } from "@/hooks/useAvailability";
 import { AvailabilityBadge } from "./AvailabilityBadge";
@@ -29,6 +30,7 @@ export function BookingForm({ customer }: Props) {
   const [customerEmail, setCustomerEmail] = useState(customer?.email ?? "");
   const [notes, setNotes] = useState("");
 
+  const [privacyConsent, setPrivacyConsent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [kitchenBumped, setKitchenBumped] = useState(false);
@@ -122,6 +124,12 @@ export function BookingForm({ customer }: Props) {
     setTouched({ name: true, phone: true, email: true });
     setInlineErrors(allErrors);
     if (allErrors.name || allErrors.phone || allErrors.email) return;
+
+    // Guest must consent to privacy policy
+    if (!customer && !privacyConsent) {
+      setInlineErrors((prev) => ({ ...prev, privacy: t("errPrivacyRequired") }));
+      return;
+    }
 
     if (!branch || !session || !date || !arrivalTime) {
       setSubmitError(t("errRequired"));
@@ -381,6 +389,40 @@ export function BookingForm({ customer }: Props) {
             className={`${inputCls} resize-none`}
           />
         </Field>
+
+        {/* Guest privacy policy consent */}
+        {!customer && (
+          <div className="space-y-1.5">
+            <label className="flex cursor-pointer items-start gap-2.5">
+              <input
+                type="checkbox"
+                checked={privacyConsent}
+                onChange={(e) => {
+                  setPrivacyConsent(e.target.checked);
+                  if (e.target.checked) {
+                    setInlineErrors((prev) => ({ ...prev, privacy: "" }));
+                  }
+                }}
+                className="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 accent-brand-red"
+              />
+              <span className="text-sm text-gray-700">
+                {t("guestPrivacyLabel")}{" "}
+                <Link
+                  href="/chinh-sach"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-brand-red underline underline-offset-2 hover:text-brand-red-dark"
+                >
+                  {t("guestPrivacyLinkText")}
+                </Link>{" "}
+                <span className="text-red-500">*</span>
+              </span>
+            </label>
+            {inlineErrors.privacy && (
+              <p className="text-xs text-red-600">{inlineErrors.privacy}</p>
+            )}
+          </div>
+        )}
 
         {/* Submit error */}
         {submitError && (

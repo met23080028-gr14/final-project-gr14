@@ -1,14 +1,22 @@
 import type { Metadata } from "next";
-import { Be_Vietnam_Pro } from "next/font/google";
+import { Plus_Jakarta_Sans, Lora } from "next/font/google";
 import "./globals.css";
 import { I18nProvider } from "@/lib/i18n/context";
 import { CustomerProvider } from "@/lib/customer-context";
 import { Header } from "@/components/layout/Header";
 
-const beVietnam = Be_Vietnam_Pro({
+const jakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin", "vietnamese"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-  variable: "--font-be-vietnam",
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-jakarta",
+  display: "swap",
+});
+
+const lora = Lora({
+  subsets: ["latin", "vietnamese"],
+  weight: ["400", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-lora",
   display: "swap",
 });
 
@@ -23,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className={`h-full ${beVietnam.variable}`}>
+    <html lang="vi" className={`h-full ${jakartaSans.variable} ${lora.variable}`}>
       <body className="min-h-full flex flex-col antialiased bg-surface">
         <I18nProvider>
           <CustomerProvider>

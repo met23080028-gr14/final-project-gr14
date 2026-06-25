@@ -83,7 +83,8 @@ const en: Dictionary = {
   cancelConfirmPrompt: "Are you sure you want to cancel this booking?",
   cancelSuccess: "Your booking has been successfully cancelled.",
   cancelTooLate:
-    "Cancellations are not allowed within 2 hours of arrival. Please contact the restaurant.",
+    "Cancellations are not allowed within 15 minutes of arrival. Please contact the restaurant.",
+  cancelCutoffNote: "Can be cancelled up to 15 minutes before arrival.",
   cancelledAlready: "This booking has already been cancelled.",
 
   // ── Status labels ──────────────────────────────────────────────────────────
@@ -120,6 +121,21 @@ const en: Dictionary = {
   adminLoginLogoutBtn: "Admin Logout",
   adminLoginPrototypeNote: "Prototype — demo credentials: admin / poseidon123",
 
+  // ── Date filter (admin) ───────────────────────────────────────────────────
+  filterAll: "All dates",
+  filterToday: "Today",
+  filterTomorrow: "Tomorrow",
+  filterByDate: "Filter by date",
+  filterPickDate: "Pick a date...",
+
+  // ── Guest lookup ──────────────────────────────────────────────────────────
+  guestLookupTitle: "Look up booking",
+  guestLookupSubtitle: "Enter your booking code to view or cancel",
+  guestLookupLabel: "Booking code",
+  guestLookupPlaceholder: "e.g. 18051800-X7",
+  guestLookupBtn: "Look up",
+  guestLookupNotFound: "No booking found with this code.",
+
   // ── Admin ──────────────────────────────────────────────────────────────────
   adminTitle: "Booking Management",
   adminSubtitle: "Buffet Poseidon",
@@ -148,8 +164,9 @@ const en: Dictionary = {
   adminAvailCapacity: "Capacity",
   adminAvailBooked: "Booked",
   adminAvailFree: "Available",
-  adminBirthdayTitle: "Upcoming Birthdays (next 2 days)",
+  adminBirthdayTitle: "Upcoming Birthdays (next 7 days)",
   adminBirthdayEmpty: "No upcoming birthdays.",
+  adminBirthdayVoucherIssued: "System auto-issued 10% birthday voucher",
 
   // ── Errors / validation ────────────────────────────────────────────────────
   errRequired: "Please fill in all required fields.",
@@ -179,7 +196,8 @@ const en: Dictionary = {
   loginSubtitle: "Enter your phone number to book faster",
   loginPrototypeNote: "Prototype — no real passwords, for demo purposes only.",
   loginLabelBirthday: "Birthday (optional)",
-  loginPlaceholderBirthday: "e.g. 06-25 (MM-DD)",
+  loginPlaceholderBirthday: "e.g. 02-07 (DD-MM)",
+  errInvalidBirthday: "Invalid birthday (DD-MM, e.g. 02-07)",
   loginLabelPassword: "Password (illustrative)",
   loginPlaceholderPassword: "Enter password (min. 6 characters)",
   loginErrPassword: "Password must be at least 6 characters.",
@@ -192,8 +210,8 @@ const en: Dictionary = {
   logoutBtn: "Log Out",
 
   // ── Birthday banner ───────────────────────────────────────────────────────
-  birthdayBannerTitle: "Happy Birthday!",
-  birthdayBannerBody: "Today is your birthday! Use the voucher code below to enjoy your birthday discount.",
+  birthdayBannerTitle: "Happy Birthday Week!",
+  birthdayBannerBody: "Enjoy 10% off — valid once during your birthday week (7 days).",
   birthdayBannerNote: "(Illustrative code — no real monetary value)",
   birthdayBannerDismiss: "Got it",
   birthdayVoucherLabel: "Voucher code",
@@ -275,14 +293,21 @@ const en: Dictionary = {
   notifTitle: "Notifications",
   notifBookingUpdate: "Booking Update",
   notifEmpty: "No notifications yet.",
+  notifBirthdayVoucher: "Your birthday voucher is ready! 🎂",
+  notifBirthdayVoucherBody: "Your birthday is coming up — 10% off with no minimum spend. Check your Rewards Wallet.",
+  notifBellLabel: "Notifications",
 
   // ── Wallet section ────────────────────────────────────────────────────────
   walletProtoLabel: "Sample / Prototype",
   walletBirthdayTag: "Birthday",
   walletSampleTag: "Sample Voucher",
+  walletMemberTag: "Member",
   walletOff: "off",
   walletMinSpend: "No minimum spend required",
+  walletMinSpendAmount: "From 1,000,000đ",
   walletExpiry: "Exp.",
+  walletBirthdayWeekDesc: "10% off during your birthday week — no minimum spend",
+  walletMemberDesc: "Valid for bills from 1,000,000đ",
 
   // ── Linked accounts section ───────────────────────────────────────────────
   linkedProto: "Prototype — buttons below do not perform real connections",
@@ -394,6 +419,39 @@ const en: Dictionary = {
 
   // ── Booking page (/dat-ban) ───────────────────────────────────────────────
   datBanPageTitle: "Reserve a Table at Poseidon",
+
+  // ── Voucher terms modal ───────────────────────────────────────────────────
+  voucherTermsTitle: "Terms & Conditions",
+  voucherTermsBirthdayTerms: "10% off your entire bill, no minimum spend required. Valid once during birthday week (7 days). Cannot be combined with other offers.",
+  voucherTermsMemberTerms: "10% off for bills from 1,000,000đ. Valid once. Cannot be combined with other vouchers or discounts. Not redeemable for cash.",
+  voucherTermsClose: "Close",
+  voucherTermsIllustrative: "Illustrative voucher — no real monetary value.",
+  voucherClickToSeeTerms: "See terms",
+
+  // ── Guest policy checkbox ─────────────────────────────────────────────────
+  guestPrivacyLabel: "I have read and agree to the",
+  guestPrivacyLinkText: "Privacy Policy",
+  errPrivacyRequired: "You must agree to the Privacy Policy to continue.",
+
+  // ── Static content pages ──────────────────────────────────────────────────
+  aboutPageTitle: "About Us",
+  privacyPolicyTitle: "Privacy Policy",
+
+  // ── Confirmation notes display ────────────────────────────────────────────
+  confirmationNotes: "Notes",
+
+  // ── Menu detail section ───────────────────────────────────────────────────
+  menuDetailTitle: "Full Menu",
+  menuDetailNote: "Some dishes vary by season and branch.",
+
+  // ── Customer reliability (rule-based, no ML) ─────────────────────────────
+  reliabilityLabel: "Booking Reliability",
+  reliabilityGood: "Good",
+  reliabilityMedium: "Average",
+  reliabilityPoor: "Needs Attention",
+  adminNoShowBadgePrefix: "Past no-show",
+  adminReliabilityScore: "Reliability",
+  reliabilityProtoNote: "Rule-based metric from booking history — illustrative, no ML",
 
   // ── Misc ───────────────────────────────────────────────────────────────────
   loading: "Loading...",

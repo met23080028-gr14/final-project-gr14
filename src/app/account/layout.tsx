@@ -39,10 +39,10 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:py-8">
+    <div className="mx-auto w-full max-w-6xl overflow-x-hidden px-4 py-6 sm:px-6 lg:py-8">
       {/* ── Mobile: horizontal scrollable tab bar ─────────────────────── */}
       <nav
-        className="no-scrollbar mb-5 flex w-full gap-1.5 overflow-x-auto pb-1 lg:hidden"
+        className="no-scrollbar mb-5 flex w-full flex-nowrap gap-1.5 overflow-x-auto pb-1 lg:hidden"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" } as React.CSSProperties}
       >
         {NAV_ITEMS.map(({ href, icon: Icon, key }) => {
@@ -64,7 +64,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
         })}
       </nav>
 
-      <div className="flex gap-6">
+      <div className="flex min-w-0 gap-6">
         {/* ── Desktop sidebar ──────────────────────────────────────────── */}
         <aside className="hidden w-56 shrink-0 lg:block">
           <div className="sticky top-24 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">

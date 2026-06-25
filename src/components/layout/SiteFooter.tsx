@@ -48,7 +48,7 @@ export function SiteFooter() {
               {t("footerFollow")}
             </p>
             <div className="flex items-center justify-center gap-4">
-              <SocialLink href="https://www.tiktok.com/@buffet_poseidon" label="TikTok">
+              <SocialLink href="https://www.tiktok.com/@buffet.poseidon?_r=1&_t=ZS-97VgGx7pWTM" label="TikTok">
                 <TikTokIcon />
               </SocialLink>
               <SocialLink href="https://www.facebook.com/buffetposeidon" label="Facebook">

@@ -25,6 +25,11 @@ body {
   font-family: var(--font-jakarta), "Segoe UI", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   font-weight: 400;
+  overflow-x: hidden;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 .font-display {

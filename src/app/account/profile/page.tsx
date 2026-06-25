@@ -88,7 +88,7 @@ export default function ProfilePage() {
         <p className="mt-0.5 text-sm text-gray-500">{t("loginSubtitle")}</p>
       </div>
 
-      <form onSubmit={handleSave} className="space-y-5 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+      <form onSubmit={handleSave} className="space-y-5 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
         {/* Read-only fields */}
         <div className="grid gap-5 sm:grid-cols-2">
           <Field label={t("labelName")} hint={<ReadOnlyHint />}>
@@ -218,7 +218,7 @@ function Field({
   className?: string;
 }) {
   return (
-    <div className={className}>
+    <div className={`min-w-0${className ? ` ${className}` : ""}`}>
       <div className="mb-1.5 flex items-center justify-between">
         <label className="text-sm font-semibold text-gray-700">{label}</label>
         {hint}

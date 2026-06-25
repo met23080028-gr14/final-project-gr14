@@ -63,7 +63,7 @@ const vi = {
 
   // ── Hold countdown ─────────────────────────────────────────────────────────
   holdTitle: "Bàn đang được giữ cho bạn",
-  holdUntilPrefix: "Bàn được giữ đến",
+  holdUntilPrefix: "Nhà hàng giữ bàn đến",
   holdExpires: "Hết hạn sau",
   holdExpired: "Hết thời gian giữ bàn — bàn đã được trả lại.",
 
@@ -81,8 +81,8 @@ const vi = {
   cancelConfirmPrompt: "Bạn có chắc muốn hủy đặt bàn này không?",
   cancelSuccess: "Đặt bàn đã được hủy thành công.",
   cancelTooLate:
-    "Không thể hủy trong vòng 15 phút trước giờ đến. Vui lòng liên hệ nhà hàng.",
-  cancelCutoffNote: "Có thể hủy trước 15 phút trước giờ đến.",
+    "Không thể hủy sau giờ đến. Vui lòng liên hệ nhà hàng.",
+  cancelCutoffNote: "Có thể hủy bất kỳ lúc nào trước giờ đến.",
   cancelledAlready: "Đặt bàn này đã được hủy.",
 
   // ── Status labels ──────────────────────────────────────────────────────────

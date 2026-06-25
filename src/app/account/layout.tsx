@@ -42,8 +42,8 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:py-8">
       {/* ── Mobile: horizontal scrollable tab bar ─────────────────────── */}
       <nav
-        className="mb-5 flex gap-1.5 overflow-x-auto pb-1 lg:hidden"
-        style={{ scrollbarWidth: "none" }}
+        className="no-scrollbar mb-5 flex w-full gap-1.5 overflow-x-auto pb-1 lg:hidden"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" } as React.CSSProperties}
       >
         {NAV_ITEMS.map(({ href, icon: Icon, key }) => {
           const active = pathname === href;

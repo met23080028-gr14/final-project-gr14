@@ -65,7 +65,7 @@ const en: Dictionary = {
 
   // ── Hold countdown ─────────────────────────────────────────────────────────
   holdTitle: "Your table is being held",
-  holdUntilPrefix: "Table held until",
+  holdUntilPrefix: "Restaurant holds table until",
   holdExpires: "Expires in",
   holdExpired: "Hold expired — the table has been released.",
 
@@ -83,8 +83,8 @@ const en: Dictionary = {
   cancelConfirmPrompt: "Are you sure you want to cancel this booking?",
   cancelSuccess: "Your booking has been successfully cancelled.",
   cancelTooLate:
-    "Cancellations are not allowed within 15 minutes of arrival. Please contact the restaurant.",
-  cancelCutoffNote: "Can be cancelled up to 15 minutes before arrival.",
+    "Cannot cancel after arrival time. Please contact the restaurant.",
+  cancelCutoffNote: "Can be cancelled any time before arrival.",
   cancelledAlready: "This booking has already been cancelled.",
 
   // ── Status labels ──────────────────────────────────────────────────────────

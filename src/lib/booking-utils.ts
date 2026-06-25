@@ -2,7 +2,6 @@ import type { Booking, BranchId, SessionId, AvailabilityResult } from "./types";
 import {
   TIMEZONE,
   HOLD_MINUTES,
-  CANCEL_CUTOFF_MINUTES,
   GUESTS_PER_TABLE,
   CAPACITY,
   SESSION_MAP,
@@ -20,6 +19,13 @@ export function nowInHCM(): Date {
 /** YYYY-MM-DD string for today in Asia/Ho_Chi_Minh. */
 export function todayHCM(): string {
   const d = nowInHCM();
+  return formatDateLocal(d);
+}
+
+/** YYYY-MM-DD string for tomorrow in Asia/Ho_Chi_Minh. */
+export function tomorrowHCM(): string {
+  const d = nowInHCM();
+  d.setDate(d.getDate() + 1);
   return formatDateLocal(d);
 }
 
@@ -63,7 +69,9 @@ export function computeHoldExpiry(date: string, arrivalTime: string): string {
  */
 export function effectiveStatus(b: Booking): Booking["status"] {
   if (b.status !== "pending") return b.status;
-  if (new Date(b.holdExpiresAt) < nowInHCM()) return "expired";
+  // holdExpiresAt is an absolute UTC instant; compare against Date.now(), not the
+  // locale-string trick in nowInHCM() which mis-shifts the clock on UTC servers.
+  if (new Date(b.holdExpiresAt) < new Date()) return "expired";
   return "pending";
 }
 
@@ -78,7 +86,7 @@ export function isOverdue(b: Booking): boolean {
   const s = effectiveStatus(b);
   if (s !== "pending" && s !== "confirmed") return false;
   const holdCutoff = new Date(b.holdExpiresAt);
-  return nowInHCM() > holdCutoff;
+  return new Date() > holdCutoff;
 }
 
 // ── Availability ──────────────────────────────────────────────────────────────
@@ -142,13 +150,56 @@ export function resolveBookingDate(
 
 // ── Cancellation window ───────────────────────────────────────────────────────
 
-/** Returns true if the booking can still be cancelled (before cutoff). */
+/**
+ * True if the booking can still be cancelled.
+ * Policy: the customer may cancel any time up until their arrival time.
+ * We check arrival directly rather than gating on "expired" status,
+ * because "expired" only reflects the 15-min hold window — not the arrival itself.
+ */
 export function canCancel(b: Booking): boolean {
-  const s = effectiveStatus(b);
-  if (s === "cancelled" || s === "expired") return false;
+  if (b.status === "cancelled") return false;
   const arrival = hcmDatetime(b.date, b.arrivalTime);
-  const cutoff = new Date(arrival.getTime() - CANCEL_CUTOFF_MINUTES * 60 * 1000);
-  return new Date() < cutoff;
+  return new Date() < arrival;
+}
+
+// ── Bookable slot generation ──────────────────────────────────────────────────
+
+/**
+ * Returns all arrival-time slots for a session on a given date.
+ * Slots run from startTime up to (but not including) cutoffTime, every 30 min.
+ * For today, only slots still in the future are returned.
+ */
+export function availableSlots(sessionId: SessionId, date: string): string[] {
+  const s = SESSION_MAP[sessionId];
+  if (!s) return [];
+  const [sh, sm] = s.startTime.split(":").map(Number);
+  const [eh, em] = s.cutoffTime.split(":").map(Number);
+  const isToday = date === todayHCM();
+  const now = new Date();
+  const slots: string[] = [];
+  let h = sh, m = sm;
+  while (h < eh || (h === eh && m < em)) {
+    const slot = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+    if (!isToday || hcmDatetime(date, slot) > now) {
+      slots.push(slot);
+    }
+    m += 30;
+    if (m >= 60) { h += 1; m -= 60; }
+  }
+  return slots;
+}
+
+/**
+ * The correct default booking date: today if any session still has bookable
+ * slots today, otherwise tomorrow. Prevents the form from defaulting to a
+ * date where the kitchen is fully closed.
+ */
+export function defaultBookingDate(): string {
+  const today = todayHCM();
+  const hasSlotsToday = (Object.keys(SESSION_MAP) as SessionId[]).some(
+    (id) => availableSlots(id, today).length > 0
+  );
+  return hasSlotsToday ? today : tomorrowHCM();
 }
 
 // ── Booking code ──────────────────────────────────────────────────────────────

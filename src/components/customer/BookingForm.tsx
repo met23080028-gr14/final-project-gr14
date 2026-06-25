@@ -7,7 +7,13 @@ import { useAvailability } from "@/hooks/useAvailability";
 import { AvailabilityBadge } from "./AvailabilityBadge";
 import { ConfirmationModal } from "./ConfirmationModal";
 import { BRANCHES, SESSIONS } from "@/lib/constants";
-import { todayHCM, resolveBookingDate } from "@/lib/booking-utils";
+import {
+  defaultBookingDate,
+  resolveBookingDate,
+  availableSlots,
+  todayHCM,
+  tomorrowHCM,
+} from "@/lib/booking-utils";
 import type { Booking, BranchId, Customer, SessionId } from "@/lib/types";
 
 interface Props {
@@ -22,7 +28,7 @@ export function BookingForm({ customer }: Props) {
 
   const [branch, setBranch] = useState<BranchId | "">("");
   const [session, setSession] = useState<SessionId | "">("");
-  const [date, setDate] = useState(todayHCM());
+  const [date, setDate] = useState(defaultBookingDate);
   const [arrivalTime, setArrivalTime] = useState("");
   const [partySize, setPartySize] = useState(2);
   const [customerName, setCustomerName] = useState(customer?.name ?? "");
@@ -49,38 +55,30 @@ export function BookingForm({ customer }: Props) {
 
   const { data: avail, loading: availLoading } = useAvailability(branch, session, date);
 
-  // ── Slot generation — stop at cutoffTime ────────────────────────────────────
-  const timeOptions: string[] = (() => {
-    if (!session) return [];
-    const s = SESSIONS.find((x) => x.id === session);
-    if (!s) return [];
-    const [sh, sm] = s.startTime.split(":").map(Number);
-    const [eh, em] = s.cutoffTime.split(":").map(Number);
-    const slots: string[] = [];
-    let h = sh;
-    let m = sm;
-    while (h < eh || (h === eh && m < em)) {
-      slots.push(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
-      m += 30;
-      if (m >= 60) { h += 1; m -= 60; }
-    }
-    return slots;
-  })();
+  // ── Slot generation — future-only for today, stop at cutoffTime ─────────────
+  const timeOptions = session ? availableSlots(session as SessionId, date) : [];
 
   useEffect(() => {
     setArrivalTime(timeOptions[0] ?? "");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session]);
+  }, [session, date]);
 
   useEffect(() => {
     if (!session) return;
+    // Bump if session's kitchen cutoff has already passed today
     const { date: resolved, bumped } = resolveBookingDate(date, session as SessionId);
     if (bumped) {
       setDate(resolved);
       setKitchenBumped(true);
-    } else {
-      setKitchenBumped(false);
+      return;
     }
+    // Also bump if today's remaining slots for this session are all in the past
+    if (date === todayHCM() && availableSlots(session as SessionId, date).length === 0) {
+      setDate(tomorrowHCM());
+      setKitchenBumped(true);
+      return;
+    }
+    setKitchenBumped(false);
   }, [session, date]);
 
   // ── Inline field validation ────────────────────────────────────────────────

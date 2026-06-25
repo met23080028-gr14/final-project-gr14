@@ -3,6 +3,9 @@ export type SessionId = "lunch" | "dinner";
 export type BookingStatus =
   | "pending"
   | "confirmed"
+  | "arrived"
+  | "no_show"
+  | "completed"
   | "cancelled"
   | "expired";
 
@@ -21,8 +24,10 @@ export interface Session {
   labelEn: string;
   /** HH:MM — when the session begins (earliest arrival) */
   startTime: string;
-  /** HH:MM — when serving ends (latest arrival = holdExpiresAt cutoff) */
+  /** HH:MM — when the kitchen stops serving (last possible arrival) */
   endTime: string;
+  /** HH:MM — deadline for accepting new bookings today; date bumps after this */
+  cutoffTime: string;
 }
 
 export interface Customer {
@@ -33,6 +38,9 @@ export interface Customer {
   birthday: string;
   /** ISO 8601 */
   createdAt: string;
+  /** Optional profile fields — editable in account hub */
+  gender?: "male" | "female" | "other";
+  email?: string;
 }
 
 export interface Booking {
@@ -49,10 +57,17 @@ export interface Booking {
   customerPhone: string;
   /** Set when the customer was logged in at booking time */
   customerId?: string;
+  /** Customer email (required from D2 onwards) */
+  customerEmail?: string;
+  /** Optional special requests from customer */
+  notes?: string;
   status: BookingStatus;
   /** ISO 8601 */
   createdAt: string;
   confirmedAt?: string;
+  arrivedAt?: string;
+  noShowAt?: string;
+  completedAt?: string;
   cancelledAt?: string;
   /** ISO 8601 — arrivalTime + HOLD_MINUTES; after this treat as expired if not confirmed */
   holdExpiresAt: string;

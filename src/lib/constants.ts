@@ -35,14 +35,16 @@ export const SESSIONS: Session[] = [
     labelVi: "Bữa trưa",
     labelEn: "Lunch",
     startTime: "11:00",
-    endTime: "13:00",
+    endTime: "14:00",
+    cutoffTime: "13:00",
   },
   {
     id: "dinner",
     labelVi: "Bữa tối",
     labelEn: "Dinner",
     startTime: "17:30",
-    endTime: "20:00",
+    endTime: "22:00",
+    cutoffTime: "20:30",
   },
 ];
 
@@ -100,6 +102,9 @@ export const TABLES: TableDef[] = [
   { id: "MD-K03", seats: 6, branchId: "my-dinh", zoneVi: "Gần khu trẻ em", zoneEn: "Near Kids Area" },
   { id: "MD-K04", seats: 6, branchId: "my-dinh", zoneVi: "Gần khu trẻ em", zoneEn: "Near Kids Area" },
 ];
+
+// PROTOTYPE ONLY — no real security, demo credentials only
+export const ADMIN_CREDENTIALS = { username: "admin", password: "poseidon123" } as const;
 
 export const TABLE_MAP: Record<string, TableDef> = Object.fromEntries(
   TABLES.map((t) => [t.id, t])

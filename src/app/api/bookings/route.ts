@@ -42,17 +42,22 @@ export async function POST(request: Request) {
       partySize: number;
       customerName: string;
       customerPhone: string;
+      customerEmail?: string;
+      notes?: string;
       customerId?: string;
     };
 
-    const { branch, session, date, arrivalTime, partySize, customerName, customerPhone, customerId } = body;
+    const { branch, session, date, arrivalTime, partySize, customerName, customerPhone, customerEmail, notes, customerId } = body;
 
     // ── Validate inputs ──────────────────────────────────────────────────────
     if (
       !branch || !session || !date || !arrivalTime ||
-      !partySize || !customerName || !customerPhone
+      !partySize || !customerName || !customerPhone || !customerEmail
     ) {
       return Response.json({ error: "Missing required fields" }, { status: 400 });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) {
+      return Response.json({ error: "Invalid email" }, { status: 400 });
     }
 
     if (!BRANCHES.find((b) => b.id === branch)) {
@@ -92,6 +97,8 @@ export async function POST(request: Request) {
       tablesNeeded: needed,
       customerName: customerName.trim(),
       customerPhone: customerPhone.replace(/\s/g, ""),
+      customerEmail: customerEmail.trim(),
+      ...(notes?.trim() ? { notes: notes.trim() } : {}),
       ...(customerId ? { customerId } : {}),
       status: "pending",
       createdAt: now,

@@ -7,6 +7,15 @@ const vi = {
   // ── Navigation ─────────────────────────────────────────────────────────────
   navCustomer: "Đặt bàn",
   navAdmin: "Quản lý",
+  navHome: "Trang chủ",
+  navAbout: "Về chúng tôi",
+  navPricing: "Giá Buffet",
+  navMenuLink: "Thực đơn",
+  navNews: "Tin tức",
+  navBranches: "Chi nhánh",
+  navBooking: "Đặt bàn",
+  mobileMenuOpen: "Mở menu",
+  mobileMenuClose: "Đóng menu",
 
   // ── Booking form ───────────────────────────────────────────────────────────
   formTitle: "Đặt bàn",
@@ -17,8 +26,13 @@ const vi = {
   labelPartySize: "Số khách",
   labelName: "Họ tên",
   labelPhone: "Số điện thoại",
+  labelEmail: "Email",
+  labelNotes: "Ghi chú (không bắt buộc)",
   placeholderName: "Nguyễn Văn A",
   placeholderPhone: "0901234567",
+  placeholderEmail: "example@email.com",
+  placeholderNotes: "Yêu cầu đặc biệt, dị ứng thực phẩm...",
+  errInvalidEmail: "Email không hợp lệ",
   btnBook: "Đặt bàn ngay",
   btnCancel: "Hủy đặt bàn",
   btnConfirm: "Xác nhận",
@@ -53,10 +67,14 @@ const vi = {
   holdExpires: "Hết hạn sau",
   holdExpired: "Hết thời gian giữ bàn — bàn đã được trả lại.",
 
+  // ── Session hours ──────────────────────────────────────────────────────────
+  sessionServes: "Phục vụ",
+  sessionCutoffLabel: "Nhận đặt đến",
+
   // ── Kitchen hours rule ─────────────────────────────────────────────────────
-  kitchenClosedTitle: "Bếp đã đóng cửa cho bữa này",
+  kitchenClosedTitle: "Hết giờ nhận đặt bàn cho bữa này",
   kitchenClosedBody:
-    "Khung giờ bạn chọn đã kết thúc hôm nay. Chúng tôi đã chuyển sang ngày mai.",
+    "Đã qua giờ nhận đặt bàn hôm nay. Chúng tôi đã chuyển sang ngày mai.",
 
   // ── Cancel ─────────────────────────────────────────────────────────────────
   cancelTitle: "Hủy đặt bàn",
@@ -69,11 +87,16 @@ const vi = {
   // ── Status labels ──────────────────────────────────────────────────────────
   statusPending: "Chờ xác nhận",
   statusConfirmed: "Đã xác nhận",
+  statusArrived: "Đã đến",
+  statusNoShow: "Khách không đến",
+  statusCompleted: "Đã trả bàn",
   statusCancelled: "Đã hủy",
   statusExpired: "Hết hạn giữ bàn",
 
   // ── Table assignment (admin) ───────────────────────────────────────────────
-  tableSuggestionLabel: "Gợi ý bàn",
+  tableSuggestionLabel: "Xếp bàn",
+  tableBtnToggle: "Xem gợi ý xếp bàn",
+  tableBtnHide: "Ẩn",
   tableAssigned: "Đã giao bàn",
   tableBtnAssign: "Giao bàn",
   tableBtnReassign: "Giao lại",
@@ -84,6 +107,16 @@ const vi = {
   tableOverflow: "Đoàn quá lớn — cần xử lý thủ công",
   tableAssignSuccess: "Đã giao bàn thành công.",
   tableSeats: "chỗ",
+
+  // ── Admin login gate ──────────────────────────────────────────────────────
+  adminLoginTitle: "Đăng nhập Quản trị",
+  adminLoginSubtitle: "Vui lòng đăng nhập để tiếp tục",
+  adminLoginUsername: "Tên đăng nhập",
+  adminLoginPassword: "Mật khẩu",
+  adminLoginBtn: "Đăng nhập",
+  adminLoginError: "Sai tên đăng nhập hoặc mật khẩu.",
+  adminLoginLogoutBtn: "Đăng xuất quản trị",
+  adminLoginPrototypeNote: "Prototype — thông tin đăng nhập demo: admin / poseidon123",
 
   // ── Admin ──────────────────────────────────────────────────────────────────
   adminTitle: "Quản lý đặt bàn",
@@ -99,16 +132,28 @@ const vi = {
   adminColStatus: "Trạng thái",
   adminColAction: "Thao tác",
   adminBtnConfirm: "Xác nhận",
+  adminBtnArrive: "Khách đã đến",
+  adminBtnNoShow: "Không đến",
+  adminBtnRelease: "Trả bàn",
   adminBtnSeedData: "Tạo dữ liệu mẫu",
   adminBtnReset: "Xóa tất cả",
   adminEmptyState: "Chưa có đặt bàn nào.",
   adminSeedSuccess: "Đã tạo dữ liệu mẫu.",
   adminResetSuccess: "Đã xóa toàn bộ dữ liệu.",
+  adminOverdueWarning: "Quá giờ giữ — chưa nhận bàn",
+  adminColNotes: "Ghi chú",
+  adminAvailTitle: "Tình trạng bàn hôm nay",
+  adminAvailCapacity: "Sức chứa",
+  adminAvailBooked: "Đã đặt",
+  adminAvailFree: "Còn trống",
+  adminBirthdayTitle: "Sắp sinh nhật (2 ngày tới)",
+  adminBirthdayEmpty: "Không có khách nào sắp sinh nhật.",
 
   // ── Errors / validation ────────────────────────────────────────────────────
   errRequired: "Vui lòng điền đầy đủ thông tin.",
+  errFieldRequired: "Vui lòng không để trống",
   errNoTables: "Không còn bàn trống cho lịch này.",
-  errInvalidPhone: "Số điện thoại không hợp lệ.",
+  errInvalidPhone: "Số điện thoại không hợp lệ (10 số, bắt đầu bằng 0)",
   errInvalidParty: "Số khách phải từ 1 đến 50.",
   errServer: "Có lỗi xảy ra. Vui lòng thử lại.",
   errNotFound: "Không tìm thấy đặt bàn.",
@@ -134,7 +179,8 @@ const vi = {
   loginLabelBirthday: "Ngày sinh (không bắt buộc)",
   loginPlaceholderBirthday: "Ví dụ: 06-25 (MM-DD)",
   loginLabelPassword: "Mật khẩu (minh hoạ)",
-  loginPlaceholderPassword: "Nhập mật khẩu",
+  loginPlaceholderPassword: "Nhập mật khẩu (ít nhất 6 ký tự)",
+  loginErrPassword: "Mật khẩu phải có ít nhất 6 ký tự.",
   loginBtnGoogle: "Tiếp tục với Google",
   loginBtnSubmit: "Đăng nhập / Đăng ký",
   loginBtnGuest: "Tiếp tục với tư cách khách",
@@ -157,6 +203,8 @@ const vi = {
 
   // ── Landing page — hero ───────────────────────────────────────────────────
   heroHeadline: "Trải Nghiệm Buffet Hải Sản Đỉnh Cao",
+  heroHeadlineLine1: "Trải Nghiệm Buffet",
+  heroHeadlineLine2: "Hải Sản Đỉnh Cao",
   heroSubline: "Gần 200 món hải sản cao cấp · 24 chi nhánh toàn quốc · Sức chứa 500 khách/cơ sở",
 
   // ── Landing page — membership banner ─────────────────────────────────────
@@ -190,6 +238,160 @@ const vi = {
   footerAddress: "Tầng 4 Hanoi Centerpoint, 27 Lê Văn Lương, Thanh Xuân, Hà Nội",
   footerHotline: "Hotline",
   footerFollow: "Theo dõi chúng tôi",
+  footerPhotoCredit: "Hình ảnh: Buffet Poseidon",
+
+  // ── Account hub ───────────────────────────────────────────────────────────
+  accountHub: "Tài khoản",
+  accountProfile: "Thông tin cá nhân",
+  accountActivity: "Lịch sử hoạt động",
+  accountNotifications: "Thông báo",
+  accountWallet: "Ví ưu đãi",
+  accountLinked: "Liên kết tài khoản",
+  accountTerms: "Điều khoản & chính sách",
+  accountReferral: "Giới thiệu bạn bè",
+  accountSettings: "Cài đặt",
+
+  // ── Profile section ───────────────────────────────────────────────────────
+  profileCustomerId: "Mã khách hàng",
+  profileReadOnlyHint: "Chỉ xem, không chỉnh sửa",
+  profileGender: "Giới tính",
+  profileEmail: "Email",
+  profileGenderMale: "Nam",
+  profileGenderFemale: "Nữ",
+  profileGenderOther: "Khác",
+  profileGenderUnset: "Chưa chọn",
+  profileSaveBtn: "Lưu thay đổi",
+  profileSaveSuccess: "Đã lưu thành công.",
+
+  // ── Activity section ──────────────────────────────────────────────────────
+  activityPoints: "Điểm tích luỹ",
+  activityPointsNote: "Điểm minh hoạ — không có giá trị thực",
+  activityNoBookings: "Chưa có lịch sử đặt bàn.",
+  activityPointsEarned: "điểm đã tích",
+
+  // ── Notifications section ─────────────────────────────────────────────────
+  notifTitle: "Thông báo",
+  notifBookingUpdate: "Cập nhật đặt bàn",
+  notifEmpty: "Chưa có thông báo.",
+
+  // ── Wallet section ────────────────────────────────────────────────────────
+  walletProtoLabel: "Bản mẫu / Prototype",
+  walletBirthdayTag: "Sinh nhật",
+  walletSampleTag: "Voucher mẫu",
+  walletOff: "giảm",
+  walletMinSpend: "Không yêu cầu chi tiêu tối thiểu",
+  walletExpiry: "HSD",
+
+  // ── Linked accounts section ───────────────────────────────────────────────
+  linkedProto: "Bản mẫu — các nút dưới không thực hiện kết nối thực",
+  linkedConnect: "Liên kết",
+
+  // ── Terms section ─────────────────────────────────────────────────────────
+  termsUsageTitle: "Điều khoản sử dụng",
+  termsMemberTitle: "Chính sách thành viên",
+  termsPrivacyTitle: "Chính sách bảo mật",
+
+  // ── Referral section ──────────────────────────────────────────────────────
+  referralYourCode: "Mã giới thiệu của bạn",
+  referralBonus: "Nhận 50 điểm khi bạn bè đăng ký thành công",
+  referralProto: "Bản mẫu — chương trình chưa hoạt động",
+  referralShare: "Chia sẻ",
+  referralCopy: "Sao chép mã",
+  referralCopied: "Đã sao chép!",
+  referralFriendCount: "Bạn bè đã giới thiệu",
+
+  // ── Settings section ──────────────────────────────────────────────────────
+  settingsPasswordTitle: "Đổi mật khẩu",
+  settingsSecurityTitle: "Bảo mật sinh trắc học",
+  settingsTouchId: "Touch ID / Vân tay",
+  settingsFaceId: "Face ID / Nhận diện khuôn mặt",
+  settingsOffersTitle: "Thông báo & ưu đãi",
+  settingsOffersToggle: "Nhận thông báo khuyến mãi",
+  settingsLocationTitle: "Địa điểm của bạn",
+  settingsDevicesTitle: "Quản lý thiết bị đăng nhập",
+  settingsDeleteTitle: "Xoá tài khoản",
+  settingsDeleteConfirm: "Bạn có chắc muốn xoá tài khoản? Hành động này không thể hoàn tác.",
+  settingsDeleteBtn: "Xoá tài khoản",
+  settingsProto: "Bản mẫu — cài đặt này không có hiệu lực thực sự",
+  settingsLogout: "Đăng xuất khỏi tài khoản",
+  settingsSaved: "Đã lưu.",
+
+  // ── Placeholder sections ──────────────────────────────────────────────────
+  placeholderComingSoon: "Đang cập nhật",
+  placeholderComingSoonNote: "Nội dung mẫu — sẽ được bổ sung sau.",
+
+  // ── Pricing page (/gia-buffet) ────────────────────────────────────────────
+  pricingPageTitle: "Giá Buffet",
+  pricingPageSubtitle: "Chọn gói buffet phù hợp với bạn",
+  pricingNote: "Giá chưa bao gồm đồ uống và thuế VAT bắt buộc",
+  pricingLunchWeekday: "Trưa ngày thường",
+  pricingLunchWeekdayDesc: "Áp dụng trưa Thứ 2 đến trưa Thứ 6",
+  pricingLunchWeekdayPrice: "528.000đ",
+  pricingEveningWeekend: "Tối ngày thường & Cuối tuần",
+  pricingEveningWeekendDesc: "Tối T2–T6 và cả ngày T7, CN",
+  pricingEveningWeekendPrice: "598.000đ",
+  pricingHoliday: "Lễ Tết & cận Lễ Tết",
+  pricingHolidayDesc: "Các ngày lễ và ngày giáp Lễ Tết",
+  pricingHolidayPrice: "648.000đ",
+  pricingKids: "Buffet Trẻ Em",
+  pricingKidsDesc: "Áp dụng cho trẻ em dưới 10 tuổi",
+  pricingKidsPrice: "258.000đ",
+  pricingCtaTitle: "Sẵn sàng trải nghiệm?",
+  pricingCtaBody: "Đặt bàn ngay hôm nay và tận hưởng bữa buffet hải sản đỉnh cao.",
+
+  // ── Menu page (/menu) ─────────────────────────────────────────────────────
+  menuPageTitle: "Thực đơn",
+  menuPageIntro: "Gần 200 món hải sản cao cấp",
+  menuPageBody: "Từ tôm hùm, cua hoàng đế, bào ngư đến sashimi và các món nướng đặc sắc — tất cả được tuyển chọn tươi sống mỗi ngày.",
+  menuGalleryTitle: "Không gian & Món ăn",
+
+  // ── Branches page (/chi-nhanh) ────────────────────────────────────────────
+  branchesPageTitle: "Chi nhánh",
+  branchesPageSubtitle: "Hai chi nhánh tại Hà Nội",
+  branchesMapBtn: "Xem bản đồ",
+
+  // ── About section (landing) ───────────────────────────────────────────────
+  aboutTitle: "Về Buffet Poseidon",
+  aboutBody: "Poseidon là hệ thống nhà hàng buffet hải sản hàng đầu Việt Nam với 24 chi nhánh toàn quốc. Chúng tôi tự hào mang đến trải nghiệm ẩm thực đẳng cấp với gần 200 món hải sản tươi sống được tuyển chọn kỹ lưỡng mỗi ngày.",
+
+  // ── Booking QR code ───────────────────────────────────────────────────────
+  qrExportBtn: "Xuất mã QR",
+  qrDownloadBtn: "Tải PNG",
+  qrSummaryTitle: "Thông tin đặt bàn",
+  qrSummaryCode: "Mã đặt bàn",
+  qrSummaryName: "Tên",
+  qrSummaryBranch: "Chi nhánh",
+  qrSummarySession: "Bữa ăn",
+  qrSummaryTime: "Giờ đến",
+  qrSummaryGuests: "Số khách",
+  qrNote: "Xuất trình mã QR này khi đến để check-in nhanh.",
+
+  // ── Check-in page (/checkin/[id]) ─────────────────────────────────────────
+  checkinTitle: "Check-in thành công",
+  checkinSubtitle: "Cảm ơn bạn đã đến!",
+  checkinAlreadyTitle: "Đã check-in trước đó",
+  checkinAlreadyBody: "Đặt bàn này đã được ghi nhận là đã đến.",
+  checkinInvalidTitle: "Không thể check-in",
+  checkinInvalidBody: "Đặt bàn đã bị hủy hoặc không hợp lệ. Vui lòng liên hệ nhà hàng.",
+  checkinNotFoundTitle: "Không tìm thấy đặt bàn",
+  checkinNotFoundBody: "Mã QR không hợp lệ hoặc đặt bàn không tồn tại.",
+  checkinProtoNote: "⚠️ Bản mẫu — link check-in này không có xác thực nhân viên.",
+  checkinBackHome: "Về trang chủ",
+
+  // ── Admin scanner page (/admin/scan) ─────────────────────────────────────
+  adminScanTitle: "Quét mã QR check-in",
+  adminScanSubtitle: "Hướng camera vào mã QR của khách",
+  adminScanBtn: "Mở camera",
+  adminScanStop: "Dừng camera",
+  adminScanSuccess: "Check-in thành công!",
+  adminScanAlready: "Khách đã check-in trước đó.",
+  adminScanError: "Không thể check-in. Vui lòng thử lại.",
+  adminScanNoCameraNote: "Camera yêu cầu HTTPS hoặc localhost. Nếu camera không khả dụng, hãy kiểm tra giao thức kết nối.",
+  adminScanBackAdmin: "Quay lại quản lý",
+  adminScanLink: "Quét QR check-in",
+
+  // ── Booking page (/dat-ban) ───────────────────────────────────────────────
+  datBanPageTitle: "Đặt bàn tại Poseidon",
 
   // ── Misc ───────────────────────────────────────────────────────────────────
   loading: "Đang tải...",

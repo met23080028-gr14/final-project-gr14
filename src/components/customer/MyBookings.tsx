@@ -10,10 +10,13 @@ interface Props {
 }
 
 const STATUS_COLORS: Record<Booking["status"], string> = {
-  pending: "bg-yellow-100 text-yellow-800",
+  pending:   "bg-yellow-100 text-yellow-800",
   confirmed: "bg-green-100 text-green-800",
+  arrived:   "bg-blue-100 text-blue-800",
+  no_show:   "bg-orange-100 text-orange-700",
+  completed: "bg-gray-100 text-gray-500",
   cancelled: "bg-gray-100 text-gray-500",
-  expired: "bg-red-100 text-red-700",
+  expired:   "bg-red-100 text-red-700",
 };
 
 export function MyBookings({ customerId }: Props) {
@@ -77,6 +80,9 @@ export function MyBookings({ customerId }: Props) {
                   >
                     {b.status === "pending" ? t("statusPending") :
                      b.status === "confirmed" ? t("statusConfirmed") :
+                     b.status === "arrived" ? t("statusArrived") :
+                     b.status === "no_show" ? t("statusNoShow") :
+                     b.status === "completed" ? t("statusCompleted") :
                      b.status === "cancelled" ? t("statusCancelled") :
                      t("statusExpired")}
                   </span>

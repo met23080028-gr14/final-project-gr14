@@ -13,6 +13,9 @@ interface Props {
   customer?: Customer | null;
 }
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_RE = /^0\d{9}$/;
+
 export function BookingForm({ customer }: Props) {
   const { t, lang } = useTranslation();
 
@@ -23,27 +26,34 @@ export function BookingForm({ customer }: Props) {
   const [partySize, setPartySize] = useState(2);
   const [customerName, setCustomerName] = useState(customer?.name ?? "");
   const [customerPhone, setCustomerPhone] = useState(customer?.phone ?? "");
+  const [customerEmail, setCustomerEmail] = useState(customer?.email ?? "");
+  const [notes, setNotes] = useState("");
 
   const [submitting, setSubmitting] = useState(false);
-  const [fieldError, setFieldError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [kitchenBumped, setKitchenBumped] = useState(false);
   const [confirmedBooking, setConfirmedBooking] = useState<Booking | null>(null);
+
+  // Inline blur-validation state
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [inlineErrors, setInlineErrors] = useState<Record<string, string>>({});
 
   // Sync auto-fill when customer logs in or logs out
   useEffect(() => {
     setCustomerName(customer?.name ?? "");
     setCustomerPhone(customer?.phone ?? "");
+    setCustomerEmail(customer?.email ?? "");
   }, [customer?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const { data: avail, loading: availLoading } = useAvailability(branch, session, date);
 
-  // ── Generate arrival-time options for selected session ──────────────────────
+  // ── Slot generation — stop at cutoffTime ────────────────────────────────────
   const timeOptions: string[] = (() => {
     if (!session) return [];
     const s = SESSIONS.find((x) => x.id === session);
     if (!s) return [];
     const [sh, sm] = s.startTime.split(":").map(Number);
-    const [eh, em] = s.endTime.split(":").map(Number);
+    const [eh, em] = s.cutoffTime.split(":").map(Number);
     const slots: string[] = [];
     let h = sh;
     let m = sm;
@@ -55,13 +65,11 @@ export function BookingForm({ customer }: Props) {
     return slots;
   })();
 
-  // Reset arrival time when session changes
   useEffect(() => {
     setArrivalTime(timeOptions[0] ?? "");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
-  // Apply kitchen-hours rule when session or date changes
   useEffect(() => {
     if (!session) return;
     const { date: resolved, bumped } = resolveBookingDate(date, session as SessionId);
@@ -73,24 +81,58 @@ export function BookingForm({ customer }: Props) {
     }
   }, [session, date]);
 
+  // ── Inline field validation ────────────────────────────────────────────────
+  function validateField(field: string, value: string): string {
+    if (field === "name") {
+      if (!value.trim()) return t("errFieldRequired");
+    }
+    if (field === "phone") {
+      if (!value.trim()) return t("errFieldRequired");
+      if (!PHONE_RE.test(value.replace(/\s/g, ""))) return t("errInvalidPhone");
+    }
+    if (field === "email") {
+      if (!value.trim()) return t("errFieldRequired");
+      if (!EMAIL_RE.test(value.trim())) return t("errInvalidEmail");
+    }
+    return "";
+  }
+
+  function handleBlur(field: string, value: string) {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    setInlineErrors((prev) => ({ ...prev, [field]: validateField(field, value) }));
+  }
+
+  function handleChange(field: string, value: string, setter: (v: string) => void) {
+    setter(value);
+    if (touched[field]) {
+      setInlineErrors((prev) => ({ ...prev, [field]: validateField(field, value) }));
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setFieldError(null);
+    setSubmitError(null);
 
-    if (!branch || !session || !date || !arrivalTime || !customerName || !customerPhone) {
-      setFieldError(t("errRequired"));
-      return;
-    }
-    if (!/^0\d{9}$/.test(customerPhone.replace(/\s/g, ""))) {
-      setFieldError(t("errInvalidPhone"));
+    // Force-touch all required fields before submit
+    const allErrors = {
+      name: validateField("name", customerName),
+      phone: validateField("phone", customerPhone),
+      email: validateField("email", customerEmail),
+    };
+    setTouched({ name: true, phone: true, email: true });
+    setInlineErrors(allErrors);
+    if (allErrors.name || allErrors.phone || allErrors.email) return;
+
+    if (!branch || !session || !date || !arrivalTime) {
+      setSubmitError(t("errRequired"));
       return;
     }
     if (partySize < 1 || partySize > 50) {
-      setFieldError(t("errInvalidParty"));
+      setSubmitError(t("errInvalidParty"));
       return;
     }
     if (avail && avail.available === 0) {
-      setFieldError(t("errNoTables"));
+      setSubmitError(t("errNoTables"));
       return;
     }
 
@@ -107,6 +149,8 @@ export function BookingForm({ customer }: Props) {
           partySize,
           customerName,
           customerPhone,
+          customerEmail: customerEmail.trim(),
+          ...(notes.trim() ? { notes: notes.trim() } : {}),
           ...(customer?.id ? { customerId: customer.id } : {}),
         }),
       });
@@ -114,14 +158,14 @@ export function BookingForm({ customer }: Props) {
       const data = await res.json() as Booking & { error?: string };
 
       if (!res.ok) {
-        if (res.status === 409) setFieldError(t("errNoTables"));
-        else setFieldError(data.error ?? t("errServer"));
+        if (res.status === 409) setSubmitError(t("errNoTables"));
+        else setSubmitError(data.error ?? t("errServer"));
         return;
       }
 
       setConfirmedBooking(data);
     } catch {
-      setFieldError(t("errServer"));
+      setSubmitError(t("errServer"));
     } finally {
       setSubmitting(false);
     }
@@ -221,10 +265,12 @@ export function BookingForm({ customer }: Props) {
           </Field>
         </div>
 
-        {/* Session info */}
+        {/* Session serving info */}
         {sessionDef && (
           <p className="text-xs text-gray-500">
-            {lang === "vi" ? "Giờ phục vụ" : "Serving hours"}: {sessionDef.startTime}–{sessionDef.endTime}
+            {t("sessionServes")}: {sessionDef.startTime}–{sessionDef.endTime}
+            {" · "}
+            {t("sessionCutoffLabel")}: {sessionDef.cutoffTime}
           </p>
         )}
 
@@ -265,35 +311,81 @@ export function BookingForm({ customer }: Props) {
         )}
 
         {/* Name */}
-        <Field label={t("labelName")} htmlFor="name">
+        <div className="space-y-1.5">
+          <label htmlFor="name" className="block text-sm font-semibold text-gray-700">
+            {t("labelName")} <span className="text-red-500">*</span>
+          </label>
           <input
             id="name"
             type="text"
             value={customerName}
-            onChange={(e) => setCustomerName(e.target.value)}
+            onChange={(e) => handleChange("name", e.target.value, setCustomerName)}
+            onBlur={(e) => handleBlur("name", e.target.value)}
             placeholder={t("placeholderName")}
             required
-            className={inputCls}
+            className={inlineErrors.name ? errorInputCls : inputCls}
           />
-        </Field>
+          {inlineErrors.name && (
+            <p className="text-xs text-red-600">{inlineErrors.name}</p>
+          )}
+        </div>
 
         {/* Phone */}
-        <Field label={t("labelPhone")} htmlFor="phone">
+        <div className="space-y-1.5">
+          <label htmlFor="phone" className="block text-sm font-semibold text-gray-700">
+            {t("labelPhone")} <span className="text-red-500">*</span>
+          </label>
           <input
             id="phone"
             type="tel"
             value={customerPhone}
-            onChange={(e) => setCustomerPhone(e.target.value)}
+            onChange={(e) => handleChange("phone", e.target.value, setCustomerPhone)}
+            onBlur={(e) => handleBlur("phone", e.target.value)}
             placeholder={t("placeholderPhone")}
             required
-            className={inputCls}
+            className={inlineErrors.phone ? errorInputCls : inputCls}
+          />
+          {inlineErrors.phone && (
+            <p className="text-xs text-red-600">{inlineErrors.phone}</p>
+          )}
+        </div>
+
+        {/* Email (required) */}
+        <div className="space-y-1.5">
+          <label htmlFor="email" className="block text-sm font-semibold text-gray-700">
+            {t("labelEmail")} <span className="text-red-500">*</span>
+          </label>
+          <input
+            id="email"
+            type="email"
+            value={customerEmail}
+            onChange={(e) => handleChange("email", e.target.value, setCustomerEmail)}
+            onBlur={(e) => handleBlur("email", e.target.value)}
+            placeholder={t("placeholderEmail")}
+            required
+            className={inlineErrors.email ? errorInputCls : inputCls}
+          />
+          {inlineErrors.email && (
+            <p className="text-xs text-red-600">{inlineErrors.email}</p>
+          )}
+        </div>
+
+        {/* Notes (optional) */}
+        <Field label={t("labelNotes")} htmlFor="notes">
+          <textarea
+            id="notes"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder={t("placeholderNotes")}
+            rows={2}
+            className={`${inputCls} resize-none`}
           />
         </Field>
 
-        {/* Error */}
-        {fieldError && (
+        {/* Submit error */}
+        {submitError && (
           <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {fieldError}
+            {submitError}
           </div>
         )}
 
@@ -324,6 +416,9 @@ export function BookingForm({ customer }: Props) {
 
 const inputCls =
   "w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-brand-red focus:ring-1 focus:ring-brand-red outline-none transition-colors";
+
+const errorInputCls =
+  "w-full rounded-lg border border-red-500 ring-1 ring-red-500 px-3 py-2.5 text-sm focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none transition-colors";
 
 function Field({
   label,

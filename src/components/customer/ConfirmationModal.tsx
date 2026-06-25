@@ -5,7 +5,9 @@ import Link from "next/link";
 import { MapPin } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/context";
 import { HoldCountdown } from "./HoldCountdown";
+import { BookingQR } from "./BookingQR";
 import { BRANCH_MAP, SESSION_MAP } from "@/lib/constants";
+import { makeBookingCode } from "@/lib/booking-utils";
 import type { Booking } from "@/lib/types";
 
 interface Props {
@@ -13,12 +15,6 @@ interface Props {
   isGuest: boolean;
   onClose: () => void;
   onCancel: (id: string) => Promise<void>;
-}
-
-function makeBookingCode(date: string, arrivalTime: string, id: string): string {
-  const [, mm, dd] = date.split("-");
-  const [hh, min] = arrivalTime.split(":");
-  return `${dd}${mm}${hh}${min}-${id.slice(-2).toUpperCase()}`;
 }
 
 export function ConfirmationModal({ booking, isGuest, onClose, onCancel }: Props) {
@@ -52,6 +48,9 @@ export function ConfirmationModal({ booking, isGuest, onClose, onCancel }: Props
   const statusLabel = {
     pending: t("statusPending"),
     confirmed: t("statusConfirmed"),
+    arrived: t("statusArrived"),
+    no_show: t("statusNoShow"),
+    completed: t("statusCompleted"),
     cancelled: t("statusCancelled"),
     expired: t("statusExpired"),
   }[booking.status];
@@ -59,6 +58,9 @@ export function ConfirmationModal({ booking, isGuest, onClose, onCancel }: Props
   const statusColor = {
     pending: "bg-yellow-100 text-yellow-800",
     confirmed: "bg-green-100 text-green-800",
+    arrived: "bg-blue-100 text-blue-800",
+    no_show: "bg-orange-100 text-orange-700",
+    completed: "bg-gray-100 text-gray-500",
     cancelled: "bg-red-100 text-red-800",
     expired: "bg-gray-100 text-gray-600",
   }[booking.status];
@@ -174,6 +176,9 @@ export function ConfirmationModal({ booking, isGuest, onClose, onCancel }: Props
           <p className="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs text-blue-700">
             {t("confirmationNotice")}
           </p>
+
+          {/* QR export */}
+          <BookingQR booking={booking} />
 
           {/* Hold countdown */}
           {(booking.status === "pending" || booking.status === "confirmed") && (

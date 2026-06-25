@@ -9,6 +9,15 @@ const en: Dictionary = {
   // ── Navigation ─────────────────────────────────────────────────────────────
   navCustomer: "Book a Table",
   navAdmin: "Admin",
+  navHome: "Home",
+  navAbout: "About Us",
+  navPricing: "Buffet Prices",
+  navMenuLink: "Menu",
+  navNews: "News",
+  navBranches: "Branches",
+  navBooking: "Book a Table",
+  mobileMenuOpen: "Open menu",
+  mobileMenuClose: "Close menu",
 
   // ── Booking form ───────────────────────────────────────────────────────────
   formTitle: "Reserve a Table",
@@ -19,8 +28,13 @@ const en: Dictionary = {
   labelPartySize: "Party size",
   labelName: "Full name",
   labelPhone: "Phone number",
+  labelEmail: "Email",
+  labelNotes: "Notes (optional)",
   placeholderName: "Nguyen Van A",
   placeholderPhone: "0901234567",
+  placeholderEmail: "example@email.com",
+  placeholderNotes: "Special requests, food allergies...",
+  errInvalidEmail: "Invalid email",
   btnBook: "Book Now",
   btnCancel: "Cancel Booking",
   btnConfirm: "Confirm",
@@ -55,10 +69,14 @@ const en: Dictionary = {
   holdExpires: "Expires in",
   holdExpired: "Hold expired — the table has been released.",
 
+  // ── Session hours ──────────────────────────────────────────────────────────
+  sessionServes: "Serves",
+  sessionCutoffLabel: "Bookings until",
+
   // ── Kitchen hours rule ─────────────────────────────────────────────────────
-  kitchenClosedTitle: "Kitchen is closed for this session",
+  kitchenClosedTitle: "Booking cutoff has passed for this session",
   kitchenClosedBody:
-    "This session has already ended today. We have moved your date to tomorrow.",
+    "We have stopped accepting bookings for this session today. Your date has been moved to tomorrow.",
 
   // ── Cancel ─────────────────────────────────────────────────────────────────
   cancelTitle: "Cancel Booking",
@@ -71,11 +89,16 @@ const en: Dictionary = {
   // ── Status labels ──────────────────────────────────────────────────────────
   statusPending: "Pending",
   statusConfirmed: "Confirmed",
+  statusArrived: "Arrived",
+  statusNoShow: "No-show",
+  statusCompleted: "Completed",
   statusCancelled: "Cancelled",
   statusExpired: "Hold Expired",
 
   // ── Table assignment (admin) ───────────────────────────────────────────────
-  tableSuggestionLabel: "Table Suggestion",
+  tableSuggestionLabel: "Tables",
+  tableBtnToggle: "View table suggestions",
+  tableBtnHide: "Hide",
   tableAssigned: "Assigned",
   tableBtnAssign: "Assign",
   tableBtnReassign: "Reassign",
@@ -86,6 +109,16 @@ const en: Dictionary = {
   tableOverflow: "Party too large — needs manual handling",
   tableAssignSuccess: "Table assigned successfully.",
   tableSeats: "seats",
+
+  // ── Admin login gate ──────────────────────────────────────────────────────
+  adminLoginTitle: "Admin Login",
+  adminLoginSubtitle: "Please sign in to continue",
+  adminLoginUsername: "Username",
+  adminLoginPassword: "Password",
+  adminLoginBtn: "Sign In",
+  adminLoginError: "Invalid username or password.",
+  adminLoginLogoutBtn: "Admin Logout",
+  adminLoginPrototypeNote: "Prototype — demo credentials: admin / poseidon123",
 
   // ── Admin ──────────────────────────────────────────────────────────────────
   adminTitle: "Booking Management",
@@ -101,16 +134,28 @@ const en: Dictionary = {
   adminColStatus: "Status",
   adminColAction: "Action",
   adminBtnConfirm: "Confirm",
+  adminBtnArrive: "Mark Arrived",
+  adminBtnNoShow: "No-show",
+  adminBtnRelease: "Release Table",
   adminBtnSeedData: "Seed Demo Data",
   adminBtnReset: "Clear All",
   adminEmptyState: "No bookings yet.",
   adminSeedSuccess: "Demo data has been seeded.",
   adminResetSuccess: "All data has been cleared.",
+  adminOverdueWarning: "Hold expired — not yet arrived",
+  adminColNotes: "Notes",
+  adminAvailTitle: "Today's Table Availability",
+  adminAvailCapacity: "Capacity",
+  adminAvailBooked: "Booked",
+  adminAvailFree: "Available",
+  adminBirthdayTitle: "Upcoming Birthdays (next 2 days)",
+  adminBirthdayEmpty: "No upcoming birthdays.",
 
   // ── Errors / validation ────────────────────────────────────────────────────
   errRequired: "Please fill in all required fields.",
+  errFieldRequired: "This field is required",
   errNoTables: "No tables available for this slot.",
-  errInvalidPhone: "Invalid phone number.",
+  errInvalidPhone: "Invalid phone number (10 digits, starting with 0)",
   errInvalidParty: "Party size must be between 1 and 50.",
   errServer: "Something went wrong. Please try again.",
   errNotFound: "Booking not found.",
@@ -136,7 +181,8 @@ const en: Dictionary = {
   loginLabelBirthday: "Birthday (optional)",
   loginPlaceholderBirthday: "e.g. 06-25 (MM-DD)",
   loginLabelPassword: "Password (illustrative)",
-  loginPlaceholderPassword: "Enter password",
+  loginPlaceholderPassword: "Enter password (min. 6 characters)",
+  loginErrPassword: "Password must be at least 6 characters.",
   loginBtnGoogle: "Continue with Google",
   loginBtnSubmit: "Sign In / Register",
   loginBtnGuest: "Continue as guest",
@@ -159,6 +205,8 @@ const en: Dictionary = {
 
   // ── Landing page — hero ───────────────────────────────────────────────────
   heroHeadline: "Premium Seafood Buffet Experience",
+  heroHeadlineLine1: "Premium Seafood",
+  heroHeadlineLine2: "Buffet Experience",
   heroSubline: "~200 premium seafood dishes · 24 branches nationwide · 500 guests per venue",
 
   // ── Landing page — membership banner ─────────────────────────────────────
@@ -192,6 +240,160 @@ const en: Dictionary = {
   footerAddress: "4F Hanoi Centerpoint, 27 Le Van Luong, Thanh Xuan, Hanoi",
   footerHotline: "Hotline",
   footerFollow: "Follow us",
+  footerPhotoCredit: "Photos: Buffet Poseidon",
+
+  // ── Account hub ───────────────────────────────────────────────────────────
+  accountHub: "Account",
+  accountProfile: "Personal Info",
+  accountActivity: "Activity History",
+  accountNotifications: "Notifications",
+  accountWallet: "Rewards Wallet",
+  accountLinked: "Linked Accounts",
+  accountTerms: "Terms & Policies",
+  accountReferral: "Refer a Friend",
+  accountSettings: "Settings",
+
+  // ── Profile section ───────────────────────────────────────────────────────
+  profileCustomerId: "Customer ID",
+  profileReadOnlyHint: "Read only, cannot edit",
+  profileGender: "Gender",
+  profileEmail: "Email",
+  profileGenderMale: "Male",
+  profileGenderFemale: "Female",
+  profileGenderOther: "Other",
+  profileGenderUnset: "Not set",
+  profileSaveBtn: "Save changes",
+  profileSaveSuccess: "Changes saved.",
+
+  // ── Activity section ──────────────────────────────────────────────────────
+  activityPoints: "Points",
+  activityPointsNote: "Illustrative points — no real monetary value",
+  activityNoBookings: "No booking history yet.",
+  activityPointsEarned: "points earned",
+
+  // ── Notifications section ─────────────────────────────────────────────────
+  notifTitle: "Notifications",
+  notifBookingUpdate: "Booking Update",
+  notifEmpty: "No notifications yet.",
+
+  // ── Wallet section ────────────────────────────────────────────────────────
+  walletProtoLabel: "Sample / Prototype",
+  walletBirthdayTag: "Birthday",
+  walletSampleTag: "Sample Voucher",
+  walletOff: "off",
+  walletMinSpend: "No minimum spend required",
+  walletExpiry: "Exp.",
+
+  // ── Linked accounts section ───────────────────────────────────────────────
+  linkedProto: "Prototype — buttons below do not perform real connections",
+  linkedConnect: "Connect",
+
+  // ── Terms section ─────────────────────────────────────────────────────────
+  termsUsageTitle: "Terms of Use",
+  termsMemberTitle: "Membership Policy",
+  termsPrivacyTitle: "Privacy Policy",
+
+  // ── Referral section ──────────────────────────────────────────────────────
+  referralYourCode: "Your referral code",
+  referralBonus: "Earn 50 points when a friend registers",
+  referralProto: "Prototype — program not yet active",
+  referralShare: "Share",
+  referralCopy: "Copy code",
+  referralCopied: "Copied!",
+  referralFriendCount: "Friends referred",
+
+  // ── Settings section ──────────────────────────────────────────────────────
+  settingsPasswordTitle: "Change Password",
+  settingsSecurityTitle: "Biometric Security",
+  settingsTouchId: "Touch ID / Fingerprint",
+  settingsFaceId: "Face ID / Face Recognition",
+  settingsOffersTitle: "Notifications & Offers",
+  settingsOffersToggle: "Receive promotion notifications",
+  settingsLocationTitle: "Your Location",
+  settingsDevicesTitle: "Manage Login Devices",
+  settingsDeleteTitle: "Delete Account",
+  settingsDeleteConfirm: "Are you sure you want to delete your account? This cannot be undone.",
+  settingsDeleteBtn: "Delete Account",
+  settingsProto: "Prototype — these settings have no real effect",
+  settingsLogout: "Sign out of account",
+  settingsSaved: "Saved.",
+
+  // ── Placeholder sections ──────────────────────────────────────────────────
+  placeholderComingSoon: "Coming Soon",
+  placeholderComingSoonNote: "Sample content — will be added later.",
+
+  // ── Pricing page (/gia-buffet) ────────────────────────────────────────────
+  pricingPageTitle: "Buffet Prices",
+  pricingPageSubtitle: "Choose the right buffet package for you",
+  pricingNote: "Prices exclude beverages and mandatory VAT",
+  pricingLunchWeekday: "Weekday Lunch",
+  pricingLunchWeekdayDesc: "Mon–Fri lunch service",
+  pricingLunchWeekdayPrice: "528,000đ",
+  pricingEveningWeekend: "Weekday Dinner & Weekend",
+  pricingEveningWeekendDesc: "Mon–Fri evenings, Sat & Sun all day",
+  pricingEveningWeekendPrice: "598,000đ",
+  pricingHoliday: "Holidays & Pre-Holiday",
+  pricingHolidayDesc: "Public holidays and days surrounding Tết",
+  pricingHolidayPrice: "648,000đ",
+  pricingKids: "Kids Buffet",
+  pricingKidsDesc: "For children under 10 years old",
+  pricingKidsPrice: "258,000đ",
+  pricingCtaTitle: "Ready to dine?",
+  pricingCtaBody: "Book your table today and enjoy a premium seafood buffet experience.",
+
+  // ── Menu page (/menu) ─────────────────────────────────────────────────────
+  menuPageTitle: "Menu",
+  menuPageIntro: "~200 Premium Seafood Dishes",
+  menuPageBody: "From lobster, king crab, abalone to sashimi and signature grilled dishes — all fresh-selected daily.",
+  menuGalleryTitle: "Space & Dishes",
+
+  // ── Branches page (/chi-nhanh) ────────────────────────────────────────────
+  branchesPageTitle: "Branches",
+  branchesPageSubtitle: "Two branches in Hanoi",
+  branchesMapBtn: "View Map",
+
+  // ── About section (landing) ───────────────────────────────────────────────
+  aboutTitle: "About Buffet Poseidon",
+  aboutBody: "Poseidon is Vietnam's leading seafood buffet chain with 24 branches nationwide. We are proud to deliver a premium dining experience with ~200 fresh seafood dishes carefully selected daily.",
+
+  // ── Booking QR code ───────────────────────────────────────────────────────
+  qrExportBtn: "Export QR",
+  qrDownloadBtn: "Download PNG",
+  qrSummaryTitle: "Booking Summary",
+  qrSummaryCode: "Booking code",
+  qrSummaryName: "Name",
+  qrSummaryBranch: "Branch",
+  qrSummarySession: "Session",
+  qrSummaryTime: "Arrival",
+  qrSummaryGuests: "Guests",
+  qrNote: "Show this QR code on arrival for quick check-in.",
+
+  // ── Check-in page (/checkin/[id]) ─────────────────────────────────────────
+  checkinTitle: "Check-in Successful",
+  checkinSubtitle: "Thank you for coming!",
+  checkinAlreadyTitle: "Already Checked In",
+  checkinAlreadyBody: "This booking has already been marked as arrived.",
+  checkinInvalidTitle: "Cannot Check In",
+  checkinInvalidBody: "This booking has been cancelled or is no longer valid. Please contact the restaurant.",
+  checkinNotFoundTitle: "Booking Not Found",
+  checkinNotFoundBody: "Invalid QR code or booking does not exist.",
+  checkinProtoNote: "⚠️ Prototype — this check-in link has no staff authentication.",
+  checkinBackHome: "Back to Home",
+
+  // ── Admin scanner page (/admin/scan) ─────────────────────────────────────
+  adminScanTitle: "QR Check-in Scanner",
+  adminScanSubtitle: "Point the camera at the customer's QR code",
+  adminScanBtn: "Open Camera",
+  adminScanStop: "Stop Camera",
+  adminScanSuccess: "Check-in successful!",
+  adminScanAlready: "Customer was already checked in.",
+  adminScanError: "Check-in failed. Please try again.",
+  adminScanNoCameraNote: "Camera requires HTTPS or localhost. If the camera is unavailable, check your connection protocol.",
+  adminScanBackAdmin: "Back to Admin",
+  adminScanLink: "Scan QR Check-in",
+
+  // ── Booking page (/dat-ban) ───────────────────────────────────────────────
+  datBanPageTitle: "Reserve a Table at Poseidon",
 
   // ── Misc ───────────────────────────────────────────────────────────────────
   loading: "Loading...",

@@ -8,6 +8,8 @@ import { useTranslation } from "@/lib/i18n/context";
 import { useCustomerContext } from "@/lib/customer-context";
 import type { Customer } from "@/lib/types";
 
+const PHONE_RE = /^0\d{9}$/;
+
 export default function LoginPage() {
   const { t } = useTranslation();
   const { login } = useCustomerContext();
@@ -18,20 +20,50 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [birthday, setBirthday] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [inlineErrors, setInlineErrors] = useState<Record<string, string>>({});
+
+  function validateField(field: string, value: string): string {
+    if (field === "phone") {
+      if (!value.trim()) return t("errFieldRequired");
+      if (!PHONE_RE.test(value.replace(/\s/g, ""))) return t("loginErrPhone");
+    }
+    if (field === "name") {
+      if (!value.trim()) return t("errFieldRequired");
+    }
+    if (field === "password") {
+      if (!value) return t("errFieldRequired");
+      if (value.length < 6) return t("loginErrPassword");
+    }
+    return "";
+  }
+
+  function handleBlur(field: string, value: string) {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    setInlineErrors((prev) => ({ ...prev, [field]: validateField(field, value) }));
+  }
+
+  function handleChange(field: string, value: string, setter: (v: string) => void) {
+    setter(value);
+    if (touched[field]) {
+      setInlineErrors((prev) => ({ ...prev, [field]: validateField(field, value) }));
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
+    setSubmitError(null);
 
-    if (!/^0\d{9}$/.test(phone.replace(/\s/g, ""))) {
-      setError(t("loginErrPhone"));
-      return;
-    }
-    if (!name.trim()) {
-      setError(t("loginErrName"));
-      return;
-    }
+    const allErrors = {
+      phone: validateField("phone", phone),
+      name: validateField("name", name),
+      password: validateField("password", password),
+    };
+    setTouched({ phone: true, name: true, password: true });
+    setInlineErrors(allErrors);
+    if (allErrors.phone || allErrors.name || allErrors.password) return;
 
     setSubmitting(true);
     try {
@@ -42,19 +74,19 @@ export default function LoginPage() {
       });
       const data = (await res.json()) as Customer & { error?: string };
       if (!res.ok) {
-        setError(data.error ?? t("errServer"));
+        setSubmitError(data.error ?? t("errServer"));
         return;
       }
       login(data);
       router.push("/");
     } catch {
-      setError(t("errServer"));
+      setSubmitError(t("errServer"));
     } finally {
       setSubmitting(false);
     }
   }
 
-  // password is collected but not sent — illustrative only
+  // password collected for validation UX only — not transmitted
   void password;
 
   return (
@@ -87,46 +119,70 @@ export default function LoginPage() {
         <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             {/* Phone */}
-            <Field label={t("labelPhone")} htmlFor="lp-phone">
+            <div className="space-y-1.5">
+              <label htmlFor="lp-phone" className="block text-sm font-semibold text-gray-700">
+                {t("labelPhone")} <span className="text-red-500">*</span>
+              </label>
               <input
                 id="lp-phone"
                 type="tel"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => handleChange("phone", e.target.value, setPhone)}
+                onBlur={(e) => handleBlur("phone", e.target.value)}
                 placeholder={t("placeholderPhone")}
                 required
-                className={inputCls}
+                className={inlineErrors.phone ? errorInputCls : inputCls}
               />
-            </Field>
+              {inlineErrors.phone && (
+                <p className="text-xs text-red-600">{inlineErrors.phone}</p>
+              )}
+            </div>
 
             {/* Full name */}
-            <Field label={t("labelName")} htmlFor="lp-name">
+            <div className="space-y-1.5">
+              <label htmlFor="lp-name" className="block text-sm font-semibold text-gray-700">
+                {t("labelName")} <span className="text-red-500">*</span>
+              </label>
               <input
                 id="lp-name"
                 type="text"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => handleChange("name", e.target.value, setName)}
+                onBlur={(e) => handleBlur("name", e.target.value)}
                 placeholder={t("placeholderName")}
                 required
-                className={inputCls}
+                className={inlineErrors.name ? errorInputCls : inputCls}
               />
-            </Field>
+              {inlineErrors.name && (
+                <p className="text-xs text-red-600">{inlineErrors.name}</p>
+              )}
+            </div>
 
-            {/* Password (illustrative — not sent or validated) */}
-            <Field label={t("loginLabelPassword")} htmlFor="lp-password">
+            {/* Password */}
+            <div className="space-y-1.5">
+              <label htmlFor="lp-password" className="block text-sm font-semibold text-gray-700">
+                {t("loginLabelPassword")} <span className="text-red-500">*</span>
+              </label>
               <input
                 id="lp-password"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => handleChange("password", e.target.value, setPassword)}
+                onBlur={(e) => handleBlur("password", e.target.value)}
                 placeholder={t("loginPlaceholderPassword")}
                 autoComplete="new-password"
-                className={inputCls}
+                className={inlineErrors.password ? errorInputCls : inputCls}
               />
-            </Field>
+              {inlineErrors.password && (
+                <p className="text-xs text-red-600">{inlineErrors.password}</p>
+              )}
+            </div>
 
             {/* Birthday (optional) */}
-            <Field label={t("loginLabelBirthday")} htmlFor="lp-birthday">
+            <div className="space-y-1.5">
+              <label htmlFor="lp-birthday" className="block text-sm font-semibold text-gray-700">
+                {t("loginLabelBirthday")}
+              </label>
               <input
                 id="lp-birthday"
                 type="text"
@@ -136,11 +192,11 @@ export default function LoginPage() {
                 maxLength={5}
                 className={inputCls}
               />
-            </Field>
+            </div>
 
-            {error && (
+            {submitError && (
               <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                {error}
+                {submitError}
               </div>
             )}
 
@@ -191,27 +247,8 @@ export default function LoginPage() {
 const inputCls =
   "w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-brand-red focus:ring-1 focus:ring-brand-red outline-none transition-colors";
 
-function Field({
-  label,
-  htmlFor,
-  children,
-}: {
-  label: string;
-  htmlFor: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="space-y-1.5">
-      <label
-        htmlFor={htmlFor}
-        className="block text-sm font-semibold text-gray-700"
-      >
-        {label}
-      </label>
-      {children}
-    </div>
-  );
-}
+const errorInputCls =
+  "w-full rounded-lg border border-red-500 ring-1 ring-red-500 px-3 py-2.5 text-sm focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none transition-colors";
 
 function GoogleIcon() {
   return (

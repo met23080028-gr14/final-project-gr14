@@ -127,6 +127,19 @@ export async function deleteAllBookings(): Promise<void> {
 
 // ── Customer API ──────────────────────────────────────────────────────────────
 
+export async function getAllCustomers(): Promise<Customer[]> {
+  if (!useRedis) {
+    return Array.from(customersMap.values());
+  }
+  const redis = await getRedis();
+  const phones = await redis.lrange<string>(CUSTOMER_KEYS.phones, 0, -1);
+  if (phones.length === 0) return [];
+  const customers = await Promise.all(
+    phones.map((p) => redis.get<Customer>(CUSTOMER_KEYS.customer(p)))
+  );
+  return customers.filter((c): c is Customer => c !== null);
+}
+
 export async function getCustomerByPhone(phone: string): Promise<Customer | null> {
   if (!useRedis) {
     return customersMap.get(phone) ?? null;

@@ -70,7 +70,15 @@ export function effectiveStatus(b: Booking): Booking["status"] {
 /** True if the booking occupies tables (counts against availability). */
 export function isActive(b: Booking): boolean {
   const s = effectiveStatus(b);
-  return s === "pending" || s === "confirmed";
+  return s === "pending" || s === "confirmed" || s === "arrived";
+}
+
+/** True if current HCM time is past arrivalTime + HOLD_MINUTES and booking is not yet arrived. */
+export function isOverdue(b: Booking): boolean {
+  const s = effectiveStatus(b);
+  if (s !== "pending" && s !== "confirmed") return false;
+  const holdCutoff = new Date(b.holdExpiresAt);
+  return nowInHCM() > holdCutoff;
 }
 
 // ── Availability ──────────────────────────────────────────────────────────────
@@ -119,10 +127,10 @@ export function resolveBookingDate(
   if (requestedDate !== today) return { date: requestedDate, bumped: false };
 
   const sessionDef = SESSION_MAP[session];
-  const sessionEnd = hcmDatetime(today, sessionDef.endTime);
-  const now = new Date(); // UTC — compare against UTC representation of sessionEnd
+  const cutoff = hcmDatetime(today, sessionDef.cutoffTime);
+  const now = new Date();
 
-  if (now >= sessionEnd) {
+  if (now >= cutoff) {
     const tomorrow = new Date(
       new Date().toLocaleString("en-US", { timeZone: TIMEZONE })
     );
@@ -141,4 +149,13 @@ export function canCancel(b: Booking): boolean {
   const arrival = hcmDatetime(b.date, b.arrivalTime);
   const cutoff = new Date(arrival.getTime() - CANCEL_CUTOFF_HOURS * 3600 * 1000);
   return new Date() < cutoff;
+}
+
+// ── Booking code ──────────────────────────────────────────────────────────────
+
+/** Human-friendly booking reference: DDMMHHmm-XX (last 2 chars of id). */
+export function makeBookingCode(date: string, arrivalTime: string, id: string): string {
+  const [, mm, dd] = date.split("-");
+  const [hh, min] = arrivalTime.split(":");
+  return `${dd}${mm}${hh}${min}-${id.slice(-2).toUpperCase()}`;
 }

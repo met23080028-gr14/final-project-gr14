@@ -29,7 +29,7 @@ export async function PATCH(request: Request, ctx: Context) {
     }
 
     const body = await request.json() as {
-      action: "confirm" | "cancel" | "assign";
+      action: "confirm" | "cancel" | "assign" | "arrive" | "no_show" | "complete";
       tableIds?: string[];
     };
     const { action } = body;
@@ -99,6 +99,56 @@ export async function PATCH(request: Request, ctx: Context) {
       const updated = {
         ...booking,
         assignedTableIds: tableIds.length > 0 ? tableIds : undefined,
+      };
+      await saveBooking(updated);
+      return Response.json(updated);
+    }
+
+    if (action === "arrive") {
+      if (current !== "confirmed") {
+        return Response.json(
+          { error: `Cannot mark arrived for a ${current} booking` },
+          { status: 409 }
+        );
+      }
+      const updated = {
+        ...booking,
+        status: "arrived" as BookingStatus,
+        arrivedAt: new Date().toISOString(),
+      };
+      await saveBooking(updated);
+      return Response.json(updated);
+    }
+
+    if (action === "no_show") {
+      if (current !== "confirmed" && current !== "pending") {
+        return Response.json(
+          { error: `Cannot mark no-show for a ${current} booking` },
+          { status: 409 }
+        );
+      }
+      const updated = {
+        ...booking,
+        status: "no_show" as BookingStatus,
+        noShowAt: new Date().toISOString(),
+        assignedTableIds: undefined,
+      };
+      await saveBooking(updated);
+      return Response.json(updated);
+    }
+
+    if (action === "complete") {
+      if (current !== "arrived") {
+        return Response.json(
+          { error: `Cannot release table for a ${current} booking` },
+          { status: 409 }
+        );
+      }
+      const updated = {
+        ...booking,
+        status: "completed" as BookingStatus,
+        completedAt: new Date().toISOString(),
+        assignedTableIds: undefined,
       };
       await saveBooking(updated);
       return Response.json(updated);

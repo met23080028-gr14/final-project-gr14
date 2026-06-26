@@ -175,7 +175,7 @@ export default function MenuPage() {
           <p className="text-[10px] font-black uppercase tracking-[0.35em] text-amber-400/70">
             Buffet Poseidon
           </p>
-          <h1 className="mt-3 text-3xl font-black text-white sm:text-4xl lg:text-5xl whitespace-nowrap">
+          <h1 className="mt-3 text-2xl font-black text-white sm:text-4xl lg:text-5xl break-words w-full">
             {t("menuPageIntro")}
           </h1>
           <p className="mt-4 max-w-xl mx-auto text-sm leading-relaxed text-white/65">
